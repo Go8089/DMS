@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: backend
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/dmv_school 
+    username: 
+    password: 
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true 
+
+jwt:
+  secret: ${JWT_SECRET}      
+
+server:
+  port: 8080
+
+admin:
+  username: ${ADMIN_USERNAME:}
+  password: ${ADMIN_PASSWORD:}  

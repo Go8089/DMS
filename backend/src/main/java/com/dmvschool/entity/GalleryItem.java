@@ -1,0 +1,33 @@
+package com.dmvschool.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor 
+public class GalleryItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+
+    @Column(length = 1000)
+    private String description;
+
+    private String mediaUrl;
+
+    @Enumerated(EnumType.STRING)
+    private MediaType mediaType;
+
+    private String category;
+
+    private Boolean homepageSlider;
+
+    private Boolean active;
+}
