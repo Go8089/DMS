@@ -3,21 +3,21 @@ spring:
     name: backend
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/dmv_school 
-    username: 
-    password: 
+    url: jdbc:postgresql://postgres:5432/dms
+    username: gopal
+    password: maddy8089
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true 
 
 jwt:
-  secret: ${JWT_SECRET}      
+  secret: your-super-secret-key-must-be-at-least-32-characters-long  
 
 server:
   port: 8080
 
 admin:
-  username: ${ADMIN_USERNAME:}
-  password: ${ADMIN_PASSWORD:}  
+  username: daimeera
+  password: maddy8089

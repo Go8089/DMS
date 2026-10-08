@@ -1,0 +1,70 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: dms-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - dtr_postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: dms-backend
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads:/dtr/uploads
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+
+  dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: dms-frontend-dev
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/src
+          target: /dms/src
+          ignore:
+            - node_modules/
+
+        - action: rebuild
+          path: ./frontend/package.json
+          target: /dms/package.json
+
+        - action: rebuild
+          path: ./frontend/vite.config.ts
+          target: /dms/vite.config.ts
+
+  prod:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: dms-frontend-prod
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+
+volumes:
+  dtr_postgres_data:
+  uploads:

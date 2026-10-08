@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dmvschool.entity.SchoolInfo;
 import com.dmvschool.service.SchoolInfoService;
-import java.util.List;
+
 @RestController 
 @RequestMapping ("api/school")
 public class SchoolInfoController {
@@ -17,7 +17,7 @@ public class SchoolInfoController {
     }
 
     @GetMapping
-    public List<SchoolInfo> getSchoolInfo() {
+    public SchoolInfo getSchoolInfo() {
         return service.getSchoolInfo();
     } 
 }

@@ -68,7 +68,9 @@ public SecurityFilterChain securityFilterChain(
                             "/api/facilities",
                             "/api/facilities/**",
                             "/api/gallery",
-                            "/api/gallery/**"
+                            "/api/gallery/**",
+                            "/api/documnets",
+                            "/api/documents/**"
                     ).permitAll()
 
                     .requestMatchers("/api/admin/**")

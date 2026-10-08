@@ -1,0 +1,12 @@
+# Stage: Development - Vite React App
+
+ARG NODE_VERSION=24.13.1-alpine
+FROM node:${NODE_VERSION}
+WORKDIR /dms
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN chown -R node:node /dms
+USER node
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
