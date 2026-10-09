@@ -1,137 +1,193 @@
 
-
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import PublicPageHero from "@/components/public/PublicPageHero";
+import PublicCard from "@/components/public/PublicCard";
+import { getAcademicInfo, getGallery } from "@/api/public";
+import { getHeroImages } from "@/components/public/PublicTheme";
+import type { AcademicInfo, GalleryItem } from "@/types/admin";
 
-type PublicPageHeroProps = {
-  eyebrow: string;
-  title: string;
-  highlight?: string;
-  description: string;
-  images: string[];
-  animation?: "slide" | "zoom" | "fade" | "float";
-  children?: React.ReactNode;
-  heightClass?: string;
-};
-
-export default function PublicPageHero({
-  eyebrow,
-  title,
-  highlight,
-  description,
-  images,
-  children,
-}: PublicPageHeroProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+export default function Academics() {
+  const [academicInfo, setAcademicInfo] = useState<AcademicInfo[]>([]);
+  const [gallery, setGallery] = useState<GalleryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (images.length < 2) return;
+    Promise.all([getAcademicInfo(), getGallery()])
+      .then(([academicData, galleryData]) => {
+        setAcademicInfo(academicData);
+        setGallery(galleryData);
+      })
+      .catch(() => {
+        setError("Unable to load academic information. Please try again later.");
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-    const timer = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % images.length);
-    }, 5000);
+  const images = getHeroImages(gallery);
 
-    return () => window.clearInterval(timer);
-  }, [images.length]);
-
-  const previous = () => {
-    setActiveIndex((current) =>
-      current === 0 ? images.length - 1 : current - 1
-    );
-  };
-
-  const next = () => {
-    setActiveIndex((current) => (current + 1) % images.length);
-  };
+  const details = [
+    {
+      title: "Classes Offered",
+      field: "classesOffered" as const,
+      description: "Explore the classes and grade levels offered at our school.",
+    },
+    {
+      title: "Subjects",
+      field: "subjects" as const,
+      description: "Discover the subjects available to our students.",
+    },
+    {
+      title: "Curriculum",
+      field: "curriculum" as const,
+      description: "Learn about our curriculum and learning approach.",
+    },
+    {
+      title: "Academic Calendar",
+      field: "academicCalendar" as const,
+      description: "Find important dates and academic schedules.",
+    },
+    {
+      title: "Examination System",
+      field: "examinationSystem" as const,
+      description: "Understand our examination and assessment process.",
+    },
+    {
+      title: "Academic Rules",
+      field: "rules" as const,
+      description: "Review the academic guidelines followed at our school.",
+    },
+  ];
 
   return (
-    <section className="relative isolate flex min-h-[580px] items-center overflow-hidden bg-slate-950 px-6 py-20 md:min-h-[650px]">
-      {/* Background image slider */}
-      <div className="absolute inset-0 -z-20 overflow-hidden">
-        {images.map((image, index) => (
-          <div
-            key={`${image}-${index}`}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === activeIndex ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <img
-              src={image}
-              alt={`School academic slide ${index + 1}`}
-              className={`h-full w-full object-cover transition-transform duration-[6000ms] ease-out ${
-                index === activeIndex ? "scale-110" : "scale-100"
-              }`}
-            />
-          </div>
-        ))}
-      </div>
+    <main className="min-h-screen bg-[#030817] text-white">
+      ```tsx
+<PublicPageHero
+  eyebrow="Learning & Development"
+  title="Explore Our"
+  highlight="Academics"
+  description="Discover our classes, subjects, curriculum, and academic approach to student development."
+  images={images}
+  animation="zoom"
+>
+  <div className="mt-8 flex flex-wrap gap-4">
+    <a
+      href="#academic-programs"
+      className="rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 font-semibold text-white transition hover:scale-105"
+    >
+      Explore Programs
+    </a>
 
-      {/* Dark overlay for readable text */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[#030817]/95 via-[#030817]/75 to-[#030817]/40" />
+    <Link
+      to="/admissions"
+      className="rounded-full border border-blue-300/40 px-6 py-3 font-semibold text-white transition hover:bg-blue-500/15"
+    >
+      Admissions
+    </Link>
+  </div>
+</PublicPageHero>
+```
 
-      <div className="mx-auto w-full max-w-7xl">
-        <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-sky-300">
-            {eyebrow}
+
+      <section
+        id="academic-programs"
+        className="mx-auto max-w-7xl px-6 py-16"
+      >
+        <div className="mb-10">
+          <p className="text-sm font-semibold uppercase tracking-widest text-sky-300">
+            Academic Information
           </p>
-
-          <h1 className="mt-5 text-4xl font-extrabold leading-tight md:text-6xl">
-            {title}{" "}
-            {highlight && (
-              <span className="bg-gradient-to-r from-sky-300 to-violet-400 bg-clip-text text-transparent">
-                {highlight}
-              </span>
-            )}
-          </h1>
-
-          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-200 md:text-lg">
-            {description}
+          <h2 className="mt-3 text-3xl font-bold">
+            Learning for the Future
+          </h2>
+          <p className="mt-3 max-w-2xl leading-7 text-slate-400">
+            Find information about our academic programs, subjects, curriculum,
+            examinations, and school guidelines.
           </p>
-
-          {children}
         </div>
-      </div>
 
-      {/* Previous / next controls */}
-      {images.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={previous}
-            aria-label="Previous slide"
-            className="absolute left-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-2xl text-white backdrop-blur transition hover:bg-sky-500/70 md:left-8"
-          >
-            ‹
-          </button>
+        {loading && (
+          <p className="text-slate-300">Loading academic information...</p>
+        )}
 
-          <button
-            type="button"
-            onClick={next}
-            aria-label="Next slide"
-            className="absolute right-4 top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-slate-950/50 text-2xl text-white backdrop-blur transition hover:bg-sky-500/70 md:right-8"
-          >
-            ›
-          </button>
-
-          {/* Clickable slide indicators */}
-          <div className="absolute bottom-7 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
-            {images.map((image, index) => (
-              <button
-                key={`${image}-dot-${index}`}
-                type="button"
-                onClick={() => setActiveIndex(index)}
-                aria-label={`Go to slide ${index + 1}`}
-                aria-current={index === activeIndex ? "true" : undefined}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  index === activeIndex
-                    ? "w-8 bg-sky-400"
-                    : "w-2.5 bg-white/60 hover:bg-white"
-                }`}
-              />
-            ))}
+        {error && (
+          <div className="rounded-xl border border-red-400/20 bg-red-950/30 p-4 text-red-300">
+            {error}
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="ml-3 underline hover:text-white"
+            >
+              Retry
+            </button>
           </div>
-        </>
-      )}
-    </section>
+        )}
+
+        {!loading && !error && academicInfo.length === 0 && (
+          <p className="text-slate-400">
+            Academic information has not been published yet.
+          </p>
+        )}
+
+        {!loading &&
+          !error &&
+          academicInfo.map((academic) => (
+            <div key={academic.id} className="mb-12">
+              <div className="mb-6">
+                <p className="text-sm font-semibold uppercase tracking-widest text-violet-300">
+                  Academic Section
+                </p>
+                <h3 className="mt-2 text-2xl font-bold">
+                  {academic.section}
+                </h3>
+                {academic.description && (
+                  <p className="mt-3 max-w-3xl leading-7 text-slate-400">
+                    {academic.description}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {details.map((detail) => {
+                  const content = academic[detail.field];
+
+                  if (!content?.trim()) return null;
+
+                  return (
+                    <PublicCard
+                      key={detail.field}
+                      title={detail.title}
+                      description={content}
+                      eyebrow={academic.section}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+      </section>
+
+      <section className="mx-auto max-w-7xl px-6 pb-20">
+        <div className="rounded-3xl border border-blue-400/20 bg-gradient-to-r from-[#081329] to-[#11103a] p-8 md:p-12">
+          <p className="text-sm font-semibold uppercase tracking-widest text-violet-300">
+            Take the Next Step
+          </p>
+          <h2 className="mt-3 text-2xl font-bold md:text-3xl">
+            Begin Your Learning Journey
+          </h2>
+          <p className="mt-4 max-w-2xl leading-7 text-slate-300">
+            Find out about admission procedures, eligibility, and the
+            information required to apply to our school.
+          </p>
+          <Link
+            to="/admissions"
+            className="mt-6 inline-flex rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-3 font-semibold transition hover:scale-105"
+          >
+            Explore Admissions →
+          </Link>
+        </div>
+      </section>
+    </main>
   );
 }
-
