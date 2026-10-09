@@ -19,5 +19,5 @@ server:
   port: 8080
 
 admin:
-  username: daimeera
-  password: maddy8089
+  username: ${ADMIN_USERNAME}
+  password: ${ADMIN_PASSWORD}
