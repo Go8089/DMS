@@ -98,7 +98,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+        <div className="mb-8 mt-16 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm uppercase tracking-widest text-sky-300">Stay informed</p>
             <h2 className="mt-2 text-3xl font-bold">Latest Notices</h2>
