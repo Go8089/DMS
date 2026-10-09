@@ -26,6 +26,7 @@ export default function Academics() {
   }, []);
 
   const images = getHeroImages(gallery);
+  console.log("Academics slider images:", images);
 
   const details = [
     {
@@ -62,7 +63,7 @@ export default function Academics() {
 
   return (
     <main className="min-h-screen bg-[#030817] text-white">
-      ```tsx
+      
 <PublicPageHero
   eyebrow="Learning & Development"
   title="Explore Our"
@@ -87,7 +88,7 @@ export default function Academics() {
     </Link>
   </div>
 </PublicPageHero>
-```
+
 
 
       <section
