@@ -1,8 +1,7 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { BookOpen, GraduationCap, CalendarDays, ClipboardCheck, BookMarked, ListChecks } from "lucide-react";
 import PublicPageHero from "@/components/public/PublicPageHero";
-import PublicCard from "@/components/public/PublicCard";
 import { getAcademicInfo, getGallery } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { AcademicInfo, GalleryItem } from "@/types/admin";
@@ -26,70 +25,66 @@ export default function Academics() {
   }, []);
 
   const images = getHeroImages(gallery);
-  console.log("Academics slider images:", images);
 
   const details = [
     {
       title: "Classes Offered",
       field: "classesOffered" as const,
-      description: "Explore the classes and grade levels offered at our school.",
+      icon: GraduationCap,
     },
     {
       title: "Subjects",
       field: "subjects" as const,
-      description: "Discover the subjects available to our students.",
+      icon: BookOpen,
     },
     {
       title: "Curriculum",
       field: "curriculum" as const,
-      description: "Learn about our curriculum and learning approach.",
+      icon: BookMarked,
     },
     {
       title: "Academic Calendar",
       field: "academicCalendar" as const,
-      description: "Find important dates and academic schedules.",
+      icon: CalendarDays,
     },
     {
       title: "Examination System",
       field: "examinationSystem" as const,
-      description: "Understand our examination and assessment process.",
+      icon: ClipboardCheck,
     },
     {
       title: "Academic Rules",
       field: "rules" as const,
-      description: "Review the academic guidelines followed at our school.",
+      icon: ListChecks,
     },
   ];
 
   return (
     <main className="min-h-screen bg-[#030817] text-white">
-      
-<PublicPageHero
-  eyebrow="Learning & Development"
-  title="Explore Our"
-  highlight="Academics"
-  description="Discover our classes, subjects, curriculum, and academic approach to student development."
-  images={images}
-  animation="zoom"
->
-  <div className="mt-8 flex flex-wrap gap-4">
-    <a
-      href="#academic-programs"
-      className="rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 font-semibold text-white transition hover:scale-105"
-    >
-      Explore Programs
-    </a>
+      <PublicPageHero
+        eyebrow="Learning & Development"
+        title="Explore Our"
+        highlight="Academics"
+        description="Discover our classes, subjects, curriculum, and academic approach to student development."
+        images={images}
+        animation="zoom"
+      >
+        <div className="mt-8 flex flex-wrap gap-4">
+          <a
+            href="#academic-programs"
+            className="rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 font-semibold text-white transition hover:scale-105"
+          >
+            Explore Programs
+          </a>
 
-    <Link
-      to="/admissions"
-      className="rounded-full border border-blue-300/40 px-6 py-3 font-semibold text-white transition hover:bg-blue-500/15"
-    >
-      Admissions
-    </Link>
-  </div>
-</PublicPageHero>
-
-
+          <Link
+            to="/admissions"
+            className="rounded-full border border-blue-300/40 px-6 py-3 font-semibold text-white transition hover:bg-blue-500/15"
+          >
+            Admissions
+          </Link>
+        </div>
+      </PublicPageHero>
 
       <section
         id="academic-programs"
@@ -103,8 +98,8 @@ export default function Academics() {
             Learning for the Future
           </h2>
           <p className="mt-3 max-w-2xl leading-7 text-slate-400">
-            Find information about our academic programs, subjects, curriculum,
-            examinations, and school guidelines.
+            Explore our academic programs, subjects, curriculum, examinations,
+            and school guidelines.
           </p>
         </div>
 
@@ -113,7 +108,7 @@ export default function Academics() {
         )}
 
         {error && (
-          <div className="rounded-xl border border-red-400/20 bg-red-950/30 p-4 text-red-300">
+          <div className="rounded-2xl border border-red-400/20 bg-red-950/30 p-5 text-red-300">
             {error}
             <button
               type="button"
@@ -126,47 +121,82 @@ export default function Academics() {
         )}
 
         {!loading && !error && academicInfo.length === 0 && (
-          <p className="text-slate-400">
-            Academic information has not been published yet.
-          </p>
+          <div className="rounded-2xl border border-blue-400/20 bg-[#081329]/80 p-8 text-center">
+            <BookOpen className="mx-auto mb-3 h-10 w-10 text-sky-300" />
+            <h3 className="text-xl font-semibold">Academic information coming soon</h3>
+            <p className="mt-2 text-slate-400">
+              Academic details will appear here once they are published.
+            </p>
+          </div>
         )}
 
-        {!loading &&
-          !error &&
-          academicInfo.map((academic) => (
-            <div key={academic.id} className="mb-12">
-              <div className="mb-6">
-                <p className="text-sm font-semibold uppercase tracking-widest text-violet-300">
-                  Academic Section
-                </p>
-                <h3 className="mt-2 text-2xl font-bold">
-                  {academic.section}
-                </h3>
-                {academic.description && (
-                  <p className="mt-3 max-w-3xl leading-7 text-slate-400">
-                    {academic.description}
-                  </p>
-                )}
-              </div>
+        <div className="space-y-10">
+          {!loading &&
+            !error &&
+            academicInfo.map((academic) => {
+              const availableDetails = details.filter((detail) =>
+                academic[detail.field]?.trim()
+              );
 
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {details.map((detail) => {
-                  const content = academic[detail.field];
+              return (
+                <article
+                  key={academic.id}
+                  className="overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-br from-[#0b1931] via-[#081329] to-[#111035] p-6 shadow-xl shadow-blue-950/20 sm:p-8"
+                >
+                  <div className="mb-7 flex items-start gap-4">
+                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-300/20 bg-sky-400/10">
+                      <GraduationCap className="h-6 w-6 text-sky-300" />
+                    </div>
 
-                  if (!content?.trim()) return null;
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
+                        Academic Section
+                      </p>
+                      <h3 className="mt-2 text-2xl font-bold">
+                        {academic.section}
+                      </h3>
+                      {academic.description && (
+                        <p className="mt-3 max-w-3xl leading-7 text-slate-300">
+                          {academic.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
-                  return (
-                    <PublicCard
-                      key={detail.field}
-                      title={detail.title}
-                      description={content}
-                      eyebrow={academic.section}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+                  {availableDetails.length > 0 ? (
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                      {availableDetails.map((detail) => {
+                        const Icon = detail.icon;
+                        const content = academic[detail.field];
+
+                        return (
+                          <div
+                            key={detail.field}
+                            className="group rounded-2xl border border-white/10 bg-slate-950/35 p-5 transition duration-300 hover:-translate-y-1 hover:border-sky-400/40 hover:bg-blue-950/40"
+                          >
+                            <div className="mb-4 grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-sky-500/20 to-violet-500/20 text-sky-300">
+                              <Icon className="h-5 w-5" />
+                            </div>
+
+                            <h4 className="text-lg font-semibold text-white">
+                              {detail.title}
+                            </h4>
+                            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-300">
+                              {content}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl border border-white/10 bg-slate-950/30 p-4 text-sm text-slate-400">
+                      Details for this section have not been added yet.
+                    </p>
+                  )}
+                </article>
+              );
+            })}
+        </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-6 pb-20">
