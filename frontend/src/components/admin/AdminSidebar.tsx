@@ -6,6 +6,7 @@ import {
   FileText,
   Image,
   LayoutDashboard,
+  Library,
   LogOut,
   Mail,
   School,
@@ -13,7 +14,7 @@ import {
 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { removeToken } from "@/lib/auth";
-
+import { BookOpen } from "lucide-react";
 const navigation = [
   {
     label: "Dashboard",
@@ -61,6 +62,12 @@ const navigation = [
     icon: School,
   },
   {
+    lanel: "Admission Enquiries",
+    path: "/admin/admission-enquiries",
+    icon: Library,
+
+  },
+  {
     label: "Contact Enquiries",
     path: "/admin/contact",
     icon: Mail,
@@ -69,6 +76,11 @@ const navigation = [
   label: "School Information",
   path: "/admin/school",
   icon: School,
+  },
+  {
+  label: "Academics",
+  path: "/admin/academics",
+  icon: BookOpen,
   },
 ];
 

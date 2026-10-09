@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
-import { Pencil, Plus, Trash2, X } from "lucide-react";
+import { FileText, Pencil, Plus, Trash2, X } from "lucide-react";
 
 import {
   createNotice,
@@ -31,21 +31,21 @@ function AdminNotices() {
   const [notices, setNotices] = useState<Notice[]>([]);
   const [form, setForm] = useState<NoticeForm>(emptyForm);
   const [editingId, setEditingId] = useState<number | null>(null);
-
+  const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   async function loadNotices() {
     try {
+      setLoading(true);
       setError("");
+
       const data = await getNotices();
       setNotices(data);
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to load notices."
+        err instanceof Error ? err.message : "Failed to load notices.",
       );
     } finally {
       setLoading(false);
@@ -56,22 +56,21 @@ function AdminNotices() {
     loadNotices();
   }, []);
 
-  function handleChange(
-    field: keyof NoticeForm,
-    value: string
-  ) {
+  function handleChange(field: keyof NoticeForm, value: string) {
     setForm((current) => ({
       ...current,
       [field]: value,
     }));
   }
 
-  function resetForm() {
-    setForm(emptyForm);
+  function openCreateForm() {
     setEditingId(null);
+    setForm(emptyForm);
+    setShowForm(true);
+    setError("");
   }
 
-  function startEdit(notice: Notice) {
+  function openEditForm(notice: Notice) {
     setEditingId(notice.id);
 
     setForm({
@@ -82,34 +81,34 @@ function AdminNotices() {
       documentUrl: notice.documentUrl ?? "",
     });
 
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    setShowForm(true);
+    setError("");
   }
 
-  async function handleSubmit(
-    event: FormEvent<HTMLFormElement>
-  ) {
+  function closeForm() {
+    setShowForm(false);
+    setEditingId(null);
+    setForm(emptyForm);
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    setSaving(true);
-    setError("");
-
     try {
+      setSaving(true);
+      setError("");
+
       if (editingId !== null) {
         await updateNotice(editingId, form);
       } else {
         await createNotice(form);
       }
 
-      resetForm();
+      closeForm();
       await loadNotices();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to save notice."
+        err instanceof Error ? err.message : "Failed to save notice.",
       );
     } finally {
       setSaving(false);
@@ -117,11 +116,7 @@ function AdminNotices() {
   }
 
   async function handleDelete(id: number) {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this notice?"
-    );
-
-    if (!confirmed) {
+    if (!window.confirm("Are you sure you want to delete this notice?")) {
       return;
     }
 
@@ -131,261 +126,284 @@ function AdminNotices() {
       await loadNotices();
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to delete notice."
+        err instanceof Error ? err.message : "Failed to delete notice.",
       );
     }
   }
 
   return (
-    <div className="p-8">
-      <div className="mb-8">
-        <p className="text-sm font-medium text-slate-500">
-          Administration
-        </p>
+    <div className="space-y-6">
+      {/* Page header */}
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">Notices</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Create and manage school announcements and circulars.
+          </p>
+        </div>
 
-        <h1 className="mt-1 text-3xl font-semibold text-slate-900">
-          Notices
-        </h1>
-
-        <p className="mt-2 text-slate-500">
-          Create and manage school announcements and circulars.
-        </p>
+        <button
+          type="button"
+          onClick={openCreateForm}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800"
+        >
+          <Plus size={18} />
+          Add Notice
+        </button>
       </div>
 
+      {/* Error message */}
       {error && (
-        <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </div>
       )}
 
-      {/* Form */}
-      <section className="mb-8 rounded-xl border border-slate-200 bg-white p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              {editingId !== null
-                ? "Edit Notice"
-                : "Create Notice"}
-            </h2>
+      {/* Create / edit form */}
+      {showForm && (
+        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm sm:p-6">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingId !== null ? "Edit Notice" : "Create Notice"}
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                {editingId !== null
+                  ? "Update the selected notice."
+                  : "Publish a new notice to the school website."}
+              </p>
+            </div>
 
-            <p className="mt-1 text-sm text-slate-500">
-              {editingId !== null
-                ? "Update the selected notice."
-                : "Publish a new notice to the school website."}
-            </p>
-          </div>
-
-          {editingId !== null && (
             <button
               type="button"
-              onClick={resetForm}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100"
+              onClick={closeForm}
+              className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+              aria-label="Close form"
             >
-              <X size={16} />
-              Cancel
+              <X size={20} />
             </button>
-          )}
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid gap-5 md:grid-cols-2">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Title
+                </label>
+                <input
+                  required
+                  value={form.title}
+                  onChange={(e) => handleChange("title", e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+                  placeholder="School reopens on Monday"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Type
+                </label>
+                <select
+                  required
+                  value={form.type}
+                  onChange={(e) => handleChange("type", e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
+                >
+                  <option value="ANNOUNCEMENT">Announcement</option>
+                  <option value="CIRCULAR">Circular</option>
+                  <option value="HOLIDAY">Holiday</option>
+                  <option value="EXAM">Exam</option>
+                  <option value="NOTIFICATION">Notification</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Notice Date
+                </label>
+                <input
+                  required
+                  type="date"
+                  value={form.noticeDate}
+                  onChange={(e) => handleChange("noticeDate", e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition focus:border-black focus:ring-1 focus:ring-black"
+                />
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium text-gray-700">
+                  Document URL
+                </label>
+                <input
+                  type="url"
+                  value={form.documentUrl}
+                  onChange={(e) => handleChange("documentUrl", e.target.value)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+
+            {form.documentUrl.trim() && (
+              <a
+                href={form.documentUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 underline underline-offset-4 hover:text-black"
+              >
+                <FileText size={16} />
+                Preview document link
+              </a>
+            )}
+
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                Description
+              </label>
+              <textarea
+                required
+                rows={4}
+                value={form.description}
+                onChange={(e) => handleChange("description", e.target.value)}
+                className="w-full resize-y rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-black focus:ring-1 focus:ring-black"
+                placeholder="Enter notice details..."
+              />
+            </div>
+
+            <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={closeForm}
+                className="rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                disabled={saving}
+                className="rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {saving
+                  ? "Saving..."
+                  : editingId !== null
+                    ? "Update Notice"
+                    : "Publish Notice"}
+              </button>
+            </div>
+          </form>
         </div>
-
-        <form
-          onSubmit={handleSubmit}
-          className="grid gap-5 md:grid-cols-2"
-        >
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Title
-            </label>
-
-            <input
-              value={form.title}
-              onChange={(e) =>
-                handleChange("title", e.target.value)
-              }
-              required
-              className="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-slate-900"
-              placeholder="School reopens on Monday"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Type
-            </label>
-
-            <select
-              value={form.type}
-              onChange={(e) =>
-                handleChange("type", e.target.value)
-              }
-              className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 outline-none focus:border-slate-900"
-            >
-              <option value="ANNOUNCEMENT">
-                Announcement
-              </option>
-              <option value="CIRCULAR">Circular</option>
-              <option value="HOLIDAY">Holiday</option>
-              <option value="EXAM">Exam</option>
-              <option value="NOTIFICATION">
-                Notification
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Notice Date
-            </label>
-
-            <input
-              type="date"
-              value={form.noticeDate}
-              onChange={(e) =>
-                handleChange("noticeDate", e.target.value)
-              }
-              required
-              className="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-slate-900"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Document URL
-            </label>
-
-            <input
-              type="url"
-              value={form.documentUrl}
-              onChange={(e) =>
-                handleChange("documentUrl", e.target.value)
-              }
-              className="w-full rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-slate-900"
-              placeholder="https://..."
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-slate-700">
-              Description
-            </label>
-
-            <textarea
-              value={form.description}
-              onChange={(e) =>
-                handleChange("description", e.target.value)
-              }
-              required
-              rows={4}
-              className="w-full resize-none rounded-lg border border-slate-300 px-4 py-2.5 outline-none focus:border-slate-900"
-              placeholder="Enter notice details..."
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <button
-              type="submit"
-              disabled={saving}
-              className="flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800 disabled:opacity-60"
-            >
-              <Plus size={17} />
-
-              {saving
-                ? "Saving..."
-                : editingId !== null
-                  ? "Update Notice"
-                  : "Publish Notice"}
-            </button>
-          </div>
-        </form>
-      </section>
+      )}
 
       {/* Notices table */}
-      <section className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-        <div className="border-b border-slate-200 px-6 py-5">
-          <h2 className="font-semibold text-slate-900">
-            Published Notices
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-500">
-            {notices.length} notice
-            {notices.length === 1 ? "" : "s"}
-          </p>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4 sm:px-6">
+          <div>
+            <h2 className="font-semibold text-gray-900">Published Notices</h2>
+            <p className="mt-1 text-sm text-gray-500">
+              {notices.length} {notices.length === 1 ? "notice" : "notices"}
+            </p>
+          </div>
         </div>
 
         {loading ? (
-          <div className="p-8 text-center text-sm text-slate-500">
+          <div className="p-10 text-center text-sm text-gray-500">
             Loading notices...
           </div>
         ) : notices.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-500">
-            No notices found.
+          <div className="p-10 text-center">
+            <p className="text-sm font-medium text-gray-900">
+              No notices found
+            </p>
+            <p className="mt-1 text-sm text-gray-500">
+              Add a notice to publish a school announcement.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-slate-50 text-slate-500">
+            <table className="w-full min-w-[700px]">
+              <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="px-6 py-4 font-medium">
-                    Title
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 sm:px-6">
+                    Notice
                   </th>
-
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Type
                   </th>
-
-                  <th className="px-6 py-4 font-medium">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                     Date
                   </th>
-
-                  <th className="px-6 py-4 text-right font-medium">
+                  <th className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
+                    Document
+                  </th>
+                  <th className="px-5 py-3.5 text-right text-xs font-semibold uppercase tracking-wide text-gray-500 sm:px-6">
                     Actions
                   </th>
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-gray-100">
                 {notices.map((notice) => (
-                  <tr
-                    key={notice.id}
-                    className="hover:bg-slate-50"
-                  >
-                    <td className="px-6 py-4">
-                      <p className="font-medium text-slate-900">
-                        {notice.title}
-                      </p>
-
-                      <p className="mt-1 max-w-xl truncate text-slate-500">
-                        {notice.description}
-                      </p>
+                  <tr key={notice.id} className="transition hover:bg-gray-50">
+                    <td className="px-5 py-4 sm:px-6">
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600">
+                          <FileText size={19} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-medium text-gray-900">
+                            {notice.title}
+                          </p>
+                          <p className="mt-1 max-w-md truncate text-sm text-gray-500">
+                            {notice.description}
+                          </p>
+                        </div>
+                      </div>
                     </td>
 
-                    <td className="px-6 py-4">
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                    <td className="px-5 py-4">
+                      <span className="inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700">
                         {notice.type}
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-slate-500">
+                    <td className="whitespace-nowrap px-5 py-4 text-sm text-gray-600">
                       {notice.noticeDate}
                     </td>
 
-                    <td className="px-6 py-4">
+                    <td className="px-5 py-4">
+                      {notice.documentUrl ? (
+                        <a
+                          href={notice.documentUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm font-medium text-gray-700 underline underline-offset-4 hover:text-black"
+                        >
+                          View document
+                        </a>
+                      ) : (
+                        <span className="text-sm text-gray-400">—</span>
+                      )}
+                    </td>
+
+                    <td className="px-5 py-4 sm:px-6">
                       <div className="flex justify-end gap-2">
                         <button
-                          onClick={() => startEdit(notice)}
-                          className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-900"
-                          title="Edit"
+                          type="button"
+                          onClick={() => openEditForm(notice)}
+                          className="rounded-lg p-2 text-gray-500 transition hover:bg-gray-100 hover:text-gray-900"
+                          title="Edit notice"
+                          aria-label={`Edit ${notice.title}`}
                         >
                           <Pencil size={17} />
                         </button>
 
                         <button
-                          onClick={() =>
-                            handleDelete(notice.id)
-                          }
-                          className="rounded-lg p-2 text-slate-500 hover:bg-red-50 hover:text-red-600"
-                          title="Delete"
+                          type="button"
+                          onClick={() => handleDelete(notice.id)}
+                          className="rounded-lg p-2 text-red-600 transition hover:bg-red-50"
+                          title="Delete notice"
+                          aria-label={`Delete ${notice.title}`}
                         >
                           <Trash2 size={17} />
                         </button>
@@ -397,7 +415,7 @@ function AdminNotices() {
             </table>
           </div>
         )}
-      </section>
+      </div>
     </div>
   );
 }

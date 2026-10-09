@@ -2,7 +2,6 @@ package com.dmvschool.controller.admin;
 
 import com.dmvschool.entity.GalleryItem;
 import com.dmvschool.service.GalleryService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,30 +22,31 @@ public class AdminGalleryController {
     }
 
     @GetMapping("/{id}")
-    public GalleryItem getGalleryItemById(@PathVariable Long id) {
+    public GalleryItem getGalleryItemById(
+            @PathVariable Long id
+    ) {
         return service.getGalleryItemById(id);
     }
 
     @PostMapping
     public GalleryItem createGalleryItem(
-            @RequestBody GalleryItem galleryItem
+            @RequestBody GalleryItem item
     ) {
-        return service.createGalleryItem(galleryItem);
+        return service.createGalleryItem(item);
     }
 
     @PutMapping("/{id}")
     public GalleryItem updateGalleryItem(
             @PathVariable Long id,
-            @RequestBody GalleryItem galleryItem
+            @RequestBody GalleryItem item
     ) {
-        return service.updateGalleryItem(id, galleryItem);
+        return service.updateGalleryItem(id, item);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGalleryItem(
+    public void deleteGalleryItem(
             @PathVariable Long id
     ) {
         service.deleteGalleryItem(id);
-        return ResponseEntity.noContent().build();
     }
 }

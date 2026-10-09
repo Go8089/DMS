@@ -98,3 +98,49 @@ export interface SchoolInfo {
   vision: string;
   mission: string;
 }
+
+export interface SchoolInfo {
+  id: number;
+  schoolName: string;
+  address: string;
+  phone: string;
+  email: string;
+  principalName: string;
+  history: string;
+  vision: string;
+  mission: string;
+}
+
+export interface AcademicInfo {
+  id: number;
+  section: string;
+  description: string;
+  classesOffered: string;
+  subjects: string;
+  curriculum: string;
+  academicCalendar: string;
+  examinationSystem: string;
+  rules: string;
+}
+
+export interface AdmissionInfo {
+  id: number;
+  title: string;
+  description: string;
+  procedure: string;
+  eligibility: string;
+  requiredDocuments: string;
+  admissionDates: string;
+  feeDetails: string;
+  applicationFormUrl?: string;
+  brochureUrl?: string;
+  active: boolean;
+}
+
+export interface NoticeRequest {
+  title: string;
+  description: string;
+  type: string;
+  noticeDate: string;
+  documentUrl?: string;
+}

@@ -12,6 +12,7 @@ import type {
   LoginResponse,
   SchoolInfo,
 } from "@/types/admin";
+import type { AcademicInfo, AdmissionInfo } from "@/types/admin";
 
 const API_URL =
   import.meta.env.VITE_API_URL ?? "http://localhost:8080";
@@ -377,3 +378,62 @@ export async function updateSchoolInfo(
     body: JSON.stringify(schoolInfo),
   });
 }
+
+export async function getAdminAcademicInfo(): Promise<AcademicInfo[]> {
+  return request<AcademicInfo[]>("/api/admin/academics");
+}
+
+export async function createAcademicInfo(
+  academicInfo: Omit<AcademicInfo, "id">
+): Promise<AcademicInfo> {
+  return request<AcademicInfo>("/api/admin/academics", {
+    method: "POST",
+    body: JSON.stringify(academicInfo),
+  });
+}
+
+export async function updateAcademicInfo(
+  id: number,
+  academicInfo: Omit<AcademicInfo, "id">
+): Promise<AcademicInfo> {
+  return request<AcademicInfo>(`/api/admin/academics/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(academicInfo),
+  });
+}
+
+export async function deleteAcademicInfo(id: number): Promise<void> {
+  await request<void>(`/api/admin/academics/${id}`, {
+    method: "DELETE",
+  });
+}
+
+export async function getAdminAdmissionInfo(): Promise<AdmissionInfo[]> {
+  return request<AdmissionInfo[]>("/api/admin/admissions");
+}
+
+export async function createAdmissionInfo(
+  info: Omit<AdmissionInfo, "id">
+): Promise<AdmissionInfo> {
+  return request<AdmissionInfo>("/api/admin/admissions", {
+    method: "POST",
+    body: JSON.stringify(info),
+  });
+}
+
+export async function updateAdmissionInfo(
+  id: number,
+  info: Omit<AdmissionInfo, "id">
+): Promise<AdmissionInfo> {
+  return request<AdmissionInfo>(`/api/admin/admissions/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(info),
+  });
+}
+
+export async function deleteAdmissionInfo(id: number): Promise<void> {
+  await request<void>(`/api/admin/admissions/${id}`, {
+    method: "DELETE",
+  });
+}
+
