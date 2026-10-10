@@ -17,6 +17,7 @@ import PublicPageHero from "@/components/public/PublicPageHero";
 import { getAdmissionInfo, getGallery } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { AdmissionInfo, GalleryItem } from "@/types/admin";
+import Footer from "@/components/public/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
 
@@ -47,27 +48,27 @@ function Admissions() {
 
   if (loading) {
     return (
-      <section className="flex min-h-screen items-center justify-center bg-[#030817]">
-        <div className="h-12 w-12 animate-spin rounded-full border-2 border-blue-400/20 border-t-sky-400" />
+      <section className="flex min-h-screen items-center justify-center bg-slate-50">
+        <div className="h-12 w-12 animate-spin rounded-md border-2 border-slate-200 border-t-sky-400" />
       </section>
     );
   }
 
   if (!activeAdmission) {
     return (
-      <main className="flex min-h-[70vh] items-center justify-center bg-[#030817] px-6 text-center text-white">
+      <main className="flex min-h-[70vh] items-center justify-center bg-slate-50 px-6 text-center text-slate-900">
         <div className="max-w-lg">
           <GraduationCap
             className="mx-auto mb-5 text-sky-400"
             size={48}
           />
           <h1 className="text-3xl font-bold">Admissions</h1>
-          <p className="mt-4 leading-7 text-slate-400">
+          <p className="mt-4 leading-7 text-slate-500">
             {loadError || "Admission information is currently unavailable."}
           </p>
           <Link
             to="/contact"
-            className="mt-6 inline-flex rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-3 font-semibold"
+            className="mt-6 inline-flex rounded-md bg-blue-800 hover:bg-blue-900 px-6 py-3 font-semibold"
           >
             Contact Our School
           </Link>
@@ -77,20 +78,19 @@ function Admissions() {
   }
 
   return (
-    <main className="min-h-screen bg-[#030817] text-white">
+    <main className="min-h-screen bg-slate-50 text-slate-800">
       <PublicPageHero
         eyebrow="Admissions"
         title={activeAdmission.title}
         description={activeAdmission.description}
         images={images}
         animation="zoom"
-        heightClass="min-h-[600px]"
       >
         <div className="mt-8 flex flex-wrap gap-4">
           <button
             type="button"
             onClick={() => setShowForm(true)}
-            className="group inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 font-semibold text-white shadow-lg shadow-blue-950/40 transition hover:scale-105"
+            className="group inline-flex items-center gap-3 rounded-md bg-blue-800 hover:bg-blue-900 px-6 py-3 font-semibold text-slate-900 shadow-sm transition hover:scale-105"
           >
             Admission Enquiry
             <ArrowRight
@@ -104,7 +104,7 @@ function Admissions() {
               href={activeAdmission.brochureUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-3 rounded-full border border-blue-300/30 bg-[#081329]/70 px-6 py-3 font-semibold text-white backdrop-blur transition hover:border-sky-400/60 hover:bg-blue-500/10"
+              className="inline-flex items-center gap-3 rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900  transition hover:border-blue-400 hover:bg-blue-50"
             >
               <FileText size={18} />
               Download Brochure
@@ -116,7 +116,7 @@ function Admissions() {
               href={activeAdmission.applicationFormUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-3 rounded-full border border-violet-300/30 bg-[#081329]/70 px-6 py-3 font-semibold text-white backdrop-blur transition hover:border-violet-400/60 hover:bg-violet-500/10"
+              className="inline-flex items-center gap-3 rounded-md border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-900  transition hover:border-blue-400 hover:bg-violet-500/10"
             >
               <FileText size={18} />
               Application Form
@@ -128,7 +128,7 @@ function Admissions() {
       {/* Admission guide */}
       <section className="mx-auto max-w-7xl px-6 py-16 md:py-20">
         <div className="mb-10 max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-sky-300">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-blue-800">
             Admission Guide
           </p>
 
@@ -136,13 +136,13 @@ function Admissions() {
             Your Journey Starts Here
           </h2>
 
-          <p className="mt-4 leading-7 text-slate-400">
+          <p className="mt-4 leading-7 text-slate-500">
             Explore admission procedures, eligibility, required documents,
             important dates, and fee details. Select the relevant information
             below to learn more about joining our school.
           </p>
 
-          <div className="mt-6 h-1 w-20 rounded-full bg-gradient-to-r from-sky-400 to-violet-500" />
+          <div className="mt-6 h-1 w-20 rounded-md bg-blue-800" />
         </div>
 
         <div className="space-y-10">
@@ -183,12 +183,12 @@ function Admissions() {
             return (
               <div
                 key={admission.id}
-                className="overflow-hidden rounded-3xl border border-blue-400/20 bg-[#071126]/70"
+                className="overflow-hidden rounded-lg border border-slate-200 bg-white/70"
               >
-                <div className="border-b border-blue-400/15 bg-gradient-to-r from-[#0a1932] to-[#11103a] px-6 py-6 md:px-8">
+                <div className="border-b border-slate-200 bg-slate-50 px-6 py-6 md:px-8">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-blue-800">
                         Admission Information · {String(index + 1).padStart(2, "0")}
                       </p>
 
@@ -197,7 +197,7 @@ function Admissions() {
                       </h3>
 
                       {admission.description && (
-                        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+                        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-500">
                           {admission.description}
                         </p>
                       )}
@@ -206,7 +206,7 @@ function Admissions() {
                     <button
                       type="button"
                       onClick={() => setShowForm(true)}
-                      className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full border border-sky-300/25 bg-sky-400/10 px-5 py-2.5 text-sm font-semibold text-sky-200 transition hover:bg-sky-400/20 sm:self-center"
+                      className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-md border border-blue-200 bg-blue-50 px-5 py-2.5 text-sm font-semibold text-blue-800 transition hover:bg-blue-100 sm:self-center"
                     >
                       Enquire Now <ArrowRight size={16} />
                     </button>
@@ -221,23 +221,23 @@ function Admissions() {
                       return (
                         <article
                           key={item.title}
-                          className="group rounded-2xl border border-blue-300/10 bg-[#030817]/70 p-5 transition duration-300 hover:-translate-y-1 hover:border-sky-400/30 hover:bg-[#0a1830]"
+                          className="group rounded-lg border border-slate-200 bg-slate-50/70 p-5 transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:bg-blue-50"
                         >
                           <div className="flex items-start justify-between gap-3">
-                            <div className="grid h-11 w-11 place-items-center rounded-xl border border-sky-300/15 bg-sky-400/10 text-sky-300 transition group-hover:bg-sky-400/20">
+                            <div className="grid h-11 w-11 place-items-center rounded-xl border border-blue-100 bg-blue-50 text-blue-800 transition group-hover:bg-blue-100">
                               <Icon size={21} />
                             </div>
 
-                            <span className="text-sm font-semibold tracking-wider text-slate-600">
+                            <span className="text-sm font-semibold tracking-wider text-slate-500">
                               {item.number}
                             </span>
                           </div>
 
-                          <h4 className="mt-5 text-lg font-semibold text-white">
+                          <h4 className="mt-5 text-lg font-semibold text-slate-900">
                             {item.title}
                           </h4>
 
-                          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-400">
+                          <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-500">
                             {item.description}
                           </p>
                         </article>
@@ -245,7 +245,7 @@ function Admissions() {
                     })}
                   </div>
                 ) : (
-                  <p className="px-6 py-8 text-sm text-slate-400">
+                  <p className="px-6 py-8 text-sm text-slate-500">
                     Detailed admission guidance has not been published for
                     this section yet. Please contact the school for assistance.
                   </p>
@@ -253,13 +253,13 @@ function Admissions() {
 
                 {(admission.brochureUrl ||
                   admission.applicationFormUrl) && (
-                  <div className="flex flex-wrap gap-3 border-t border-blue-400/15 px-5 py-5 md:px-7">
+                  <div className="flex flex-wrap gap-3 border-t border-slate-200 px-5 py-5 md:px-7">
                     {admission.brochureUrl && (
                       <a
                         href={admission.brochureUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-sky-300/20 px-4 py-2.5 text-sm font-medium text-sky-200 transition hover:bg-sky-400/10"
+                        className="inline-flex items-center gap-2 rounded-md border border-blue-200 px-4 py-2.5 text-sm font-medium text-blue-800 transition hover:bg-blue-50"
                       >
                         <FileText size={16} />
                         Download Brochure
@@ -271,7 +271,7 @@ function Admissions() {
                         href={admission.applicationFormUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 rounded-full border border-violet-300/20 px-4 py-2.5 text-sm font-medium text-violet-200 transition hover:bg-violet-400/10"
+                        className="inline-flex items-center gap-2 rounded-md border border-slate-200 px-4 py-2.5 text-sm font-medium text-blue-800 transition hover:bg-blue-50"
                       >
                         <FileText size={16} />
                         Application Form
@@ -287,11 +287,11 @@ function Admissions() {
 
       {/* Final call to action */}
       <section className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="relative overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-r from-[#081329] to-[#11103a] p-8 md:p-12">
-          <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
+        <div className="relative overflow-hidden rounded-lg border border-slate-200 bg-white p-8 md:p-12">
+          <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-md bg-blue-500/10 blur-3xl" />
 
           <div className="relative z-10 max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-widest text-violet-300">
+            <p className="text-sm font-semibold uppercase tracking-widest text-blue-800">
               Start Your Journey
             </p>
 
@@ -299,7 +299,7 @@ function Admissions() {
               Take the First Step Toward Your Future
             </h2>
 
-            <p className="mt-4 leading-7 text-slate-300">
+            <p className="mt-4 leading-7 text-slate-500">
               Submit an admission enquiry and share your details with our
               school team. We will get in touch regarding your enquiry.
             </p>
@@ -307,7 +307,7 @@ function Admissions() {
             <button
               type="button"
               onClick={() => setShowForm(true)}
-              className="mt-7 inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-3 font-semibold transition hover:scale-105"
+              className="mt-7 inline-flex items-center gap-3 rounded-md bg-blue-800 hover:bg-blue-900 px-6 py-3 font-semibold transition hover:scale-105"
             >
               Start Admission Enquiry
               <ArrowRight size={18} />
@@ -376,35 +376,35 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden bg-[#020617]/85 px-3 py-4 backdrop-blur-xl animate-[fadeIn_.2s_ease-out] sm:px-4"
+      className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden bg-slate-900/55 px-3 py-4  animate-[fadeIn_.2s_ease-out] sm:px-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <div
-        className="hide-scrollbar relative max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-2xl border border-blue-400/25 bg-[#071126] p-5 shadow-2xl shadow-blue-950/50 animate-[slideIn_.25s_ease-out] sm:p-6"
+        className="hide-scrollbar relative max-h-[85dvh] w-full max-w-xl overflow-y-auto overscroll-contain rounded-lg border border-slate-200 bg-white p-5 shadow-xl shadow-slate-900/10 animate-[slideIn_.25s_ease-out] sm:p-6"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close admission enquiry form"
-          className="absolute right-4 top-4 z-10 rounded-full border border-blue-300/20 bg-white/5 p-2 text-slate-400 transition hover:bg-blue-500/20 hover:text-white"
+          className="absolute right-4 top-4 z-10 rounded-md border border-slate-200 bg-slate-50 p-2 text-slate-500 transition hover:bg-blue-50 hover:text-slate-900"
         >
           <X size={18} />
         </button>
 
         {!success ? (
           <>
-            <p className="pr-10 text-xs font-semibold uppercase tracking-[0.25em] text-sky-300">
+            <p className="pr-10 text-xs font-semibold uppercase tracking-[0.25em] text-blue-800">
               Admission Enquiry
             </p>
 
-            <h2 className="mt-2 pr-10 text-2xl font-bold text-white sm:text-3xl">
+            <h2 className="mt-2 pr-10 text-2xl font-bold text-slate-900 sm:text-3xl">
               Start Your Enquiry
             </h2>
 
-            <p className="mt-2 text-sm leading-6 text-slate-400">
+            <p className="mt-2 text-sm leading-6 text-slate-500">
               Share your details and our school team will contact you.
             </p>
 
@@ -456,7 +456,7 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
               <div className="sm:col-span-2">
                 <label
                   htmlFor="admission-message"
-                  className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400"
+                  className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500"
                 >
                   Message <span className="normal-case">(optional)</span>
                 </label>
@@ -468,7 +468,7 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
                     updateField("message", event.target.value)
                   }
                   rows={3}
-                  className="mt-2 w-full resize-y rounded-xl border border-blue-300/20 bg-[#030817] px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10"
+                  className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-700/10"
                   placeholder="Any questions for our school?"
                 />
               </div>
@@ -476,7 +476,7 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
               {error && (
                 <div
                   role="alert"
-                  className="rounded-xl border border-red-400/20 bg-red-950/30 px-4 py-3 text-sm text-red-300 sm:col-span-2"
+                  className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 sm:col-span-2"
                 >
                   {error}
                 </div>
@@ -485,7 +485,7 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
+                className="flex items-center justify-center gap-2 rounded-md bg-blue-800 hover:bg-blue-900 px-6 py-3 text-sm font-semibold text-slate-900 transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50 sm:col-span-2"
               >
                 {submitting ? (
                   "Submitting..."
@@ -499,15 +499,15 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
           </>
         ) : (
           <div className="flex flex-col items-center justify-center py-10 text-center">
-            <div className="grid h-16 w-16 place-items-center rounded-full border border-emerald-400/20 bg-emerald-400/10">
-              <CheckCircle2 size={36} className="text-emerald-300" />
+            <div className="grid h-16 w-16 place-items-center rounded-md border border-emerald-200 bg-emerald-50">
+              <CheckCircle2 size={36} className="text-emerald-700" />
             </div>
 
-            <h2 className="mt-5 text-2xl font-bold text-white">
+            <h2 className="mt-5 text-2xl font-bold text-slate-900">
               Enquiry Submitted
             </h2>
 
-            <p className="mt-3 max-w-sm text-sm leading-6 text-slate-400">
+            <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
               Thank you for your interest. The school will get in touch with
               you regarding your admission enquiry.
             </p>
@@ -515,14 +515,15 @@ function AdmissionEnquiryForm({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="mt-6 rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-7 py-2.5 text-sm font-semibold text-white transition hover:scale-105"
+              className="mt-6 rounded-md bg-blue-800 hover:bg-blue-900 px-7 py-2.5 text-sm font-semibold text-slate-900 transition hover:scale-105"
             >
               Close
             </button>
           </div>
         )}
       </div>
-
+      <Footer />
+      
       <style>{`
         .hide-scrollbar {
           scrollbar-width: none;
@@ -564,7 +565,7 @@ function Input({
 }) {
   return (
     <label className="block min-w-0">
-      <span className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-400">
+      <span className="text-xs font-semibold uppercase tracking-[0.15em] text-slate-500">
         {label}
       </span>
 
@@ -573,7 +574,7 @@ function Input({
         value={value}
         required={required}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-2 w-full min-w-0 rounded-xl border border-blue-300/20 bg-[#030817] px-3.5 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-sky-400 focus:ring-2 focus:ring-sky-500/10"
+        className="mt-2 w-full min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-blue-700 focus:ring-2 focus:ring-blue-700/10"
       />
     </label>
   );

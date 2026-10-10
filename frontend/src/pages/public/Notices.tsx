@@ -1,7 +1,7 @@
-
 import { useEffect, useState } from "react";
 import PublicPageHero from "@/components/public/PublicPageHero";
 import PublicCard from "@/components/public/PublicCard";
+import Footer from "@/components/public/Footer";
 import { getGallery, getNotices } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { GalleryItem, Notice } from "@/types/admin";
@@ -18,14 +18,16 @@ export default function Notices() {
         setNotices(noticeData);
         setGallery(galleryData);
       })
-      .catch(() => setError("Unable to load notices. Please try again later."))
+      .catch(() =>
+        setError("Unable to load notices. Please try again later."),
+      )
       .finally(() => setLoading(false));
   }, []);
 
   const images = getHeroImages(gallery);
 
   return (
-    <main className="min-h-screen bg-[#030817] text-white">
+    <main className="min-h-screen bg-slate-50 text-slate-800">
       <PublicPageHero
         eyebrow="Latest Updates"
         title="Important"
@@ -36,12 +38,29 @@ export default function Notices() {
       />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="mb-8 text-3xl font-bold">School Announcements</h2>
+        <div className="mb-8">
+          <p className="text-sm font-semibold uppercase tracking-widest text-blue-800">
+            Stay Informed
+          </p>
+          <h2 className="mt-3 text-3xl font-bold text-slate-900">
+            School Announcements
+          </h2>
+        </div>
 
-        {loading && <p className="text-slate-300">Loading notices...</p>}
-        {error && <p className="text-red-300">{error}</p>}
+        {loading && (
+          <p className="text-slate-600">Loading notices...</p>
+        )}
+
+        {error && (
+          <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
+            {error}
+          </p>
+        )}
+
         {!loading && !error && notices.length === 0 && (
-          <p className="text-slate-400">No notices are available right now.</p>
+          <p className="rounded-lg border border-slate-200 bg-white p-6 text-slate-500">
+            No notices are available right now.
+          </p>
         )}
 
         <div className="grid gap-5 md:grid-cols-2">
@@ -57,15 +76,17 @@ export default function Notices() {
                   href={notice.documentUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex rounded-full border border-sky-400/40 px-4 py-2 text-sm text-sky-300 transition hover:bg-sky-500/15"
+                  className="inline-flex items-center rounded-md border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
                 >
-                  View Document ↗
+                  View Document <span className="ml-1" aria-hidden="true">↗</span>
                 </a>
               )}
             </PublicCard>
           ))}
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

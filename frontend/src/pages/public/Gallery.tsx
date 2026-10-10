@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Camera,
@@ -8,8 +9,10 @@ import {
   Video,
   X,
 } from "lucide-react";
+
 import { getGallery } from "@/api/public";
 import type { GalleryItem } from "@/types/admin";
+import Footer from "@/components/public/Footer";
 
 const ROTATION_INTERVAL = 5000;
 
@@ -26,10 +29,10 @@ export default function Gallery() {
     setError("");
 
     try {
-      const data = await getGallery();
-      const activeItems = Array.isArray(data)
-        ? data.filter((item) => item.active && item.mediaUrl?.trim())
-        : [];
+      const response = await getGallery();
+      const activeItems = response.filter(
+        (item) => item.active && item.mediaUrl?.trim(),
+      );
 
       setItems(activeItems);
       setBackgroundIndex(0);
@@ -44,7 +47,6 @@ export default function Gallery() {
     void loadGallery();
   }, [loadGallery]);
 
-  // Continuously rotate the hero background through active gallery photos.
   const backgroundPhotos = useMemo(
     () => items.filter((item) => item.mediaType === "PHOTO"),
     [items],
@@ -53,18 +55,20 @@ export default function Gallery() {
   useEffect(() => {
     if (backgroundPhotos.length < 2) return;
 
-    const timer = window.setInterval(() => {
+    const interval = window.setInterval(() => {
       setBackgroundIndex((current) => (current + 1) % backgroundPhotos.length);
     }, ROTATION_INTERVAL);
 
-    return () => window.clearInterval(timer);
-  }, [backgroundPhotos]);
+    return () => window.clearInterval(interval);
+  }, [backgroundPhotos.length]);
 
   useEffect(() => {
     if (!selectedItem) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedItem(null);
+      if (event.key === "Escape") {
+        setSelectedItem(null);
+      }
     };
 
     window.addEventListener("keydown", handleKeyDown);
@@ -89,7 +93,9 @@ export default function Gallery() {
     () =>
       selectedCategory === "All"
         ? items
-        : items.filter((item) => item.category === selectedCategory),
+        : items.filter(
+            (item) => item.category?.trim() === selectedCategory,
+          ),
     [items, selectedCategory],
   );
 
@@ -103,91 +109,79 @@ export default function Gallery() {
     );
   };
 
-  
+  const currentBackground = backgroundPhotos[backgroundIndex];
 
   return (
-    <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
-      {/* Continuously changing image background */}
+    <main className="min-h-screen overflow-hidden bg-slate-50 text-slate-800">
+      {/* Hero: original dimensions preserved */}
       <section className="relative isolate flex min-h-[580px] items-center overflow-hidden sm:min-h-[680px]">
-        <div className="absolute inset-0 -z-20 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900" />
+        {backgroundPhotos.length > 0 ? (
+          backgroundPhotos.map((photo, index) => (
+            <div
+              key={photo.id}
+              className={`absolute inset-0 bg-cover bg-center transition-all duration-[1200ms] ease-in-out ${
+                index === backgroundIndex
+                  ? "scale-100 opacity-100"
+                  : "scale-105 opacity-0"
+              }`}
+              style={{
+                backgroundImage: `url("${photo.mediaUrl}")`,
+              }}
+              aria-hidden="true"
+            />
+          ))
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-blue-950 to-slate-900" />
+        )}
 
-        
+        <div className="absolute inset-0 bg-slate-950/55" />
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/40 to-slate-950/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/20" />
 
-{backgroundPhotos.map((photo, index) => {
-  const isActive =
-    index === backgroundIndex % backgroundPhotos.length;
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 sm:px-8 lg:px-12">
+          <div className="max-w-3xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-md">
+              <Camera className="h-4 w-4" />
+              <span>Moments worth remembering</span>
+            </div>
 
-  return (
-    <div
-      key={photo.id}
-      aria-hidden="true"
-      className="absolute inset-0 -z-10 overflow-hidden transition-opacity duration-[1200ms] ease-in-out"
-      style={{
-        opacity: isActive ? 1 : 0,
-      }}
-    >
-      <div
-        className="absolute inset-0 bg-cover bg-center transition-transform duration-[6000ms] ease-linear"
-        style={{
-          backgroundImage: `url(${JSON.stringify(photo.mediaUrl).slice(1, -1)})`,
-          transform: isActive ? "scale(1.12)" : "scale(1)",
-        }}
-      />
-    </div>
-  );
-})}
+            <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-7xl">
+              Our School
+              <span className="mt-2 block text-blue-300">Gallery</span>
+            </h1>
 
+            <p className="mt-6 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg sm:leading-8">
+              Explore the moments, celebrations, achievements, and everyday
+              experiences that make our school community special.
+            </p>
 
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <a
+                href="#gallery-items"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-700 px-6 py-3 font-semibold text-white shadow-lg transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-slate-900"
+              >
+                <Images className="h-5 w-5" />
+                Explore Gallery
+              </a>
 
-
-
-        <div className="absolute inset-0 -z-10 bg-slate-950/65" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-slate-950 via-slate-950/25 to-slate-950/40" />
-
-        <div className="pointer-events-none absolute -left-24 top-20 -z-10 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 bottom-10 -z-10 h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl" />
-
-        <div className="mx-auto w-full max-w-6xl px-5 py-24 sm:px-8 sm:py-32">
-          <div className="reveal-from-left inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-sm text-white backdrop-blur-md">
-            <Camera size={16} />
-            Moments worth remembering
+              <div className="inline-flex items-center gap-2 rounded-lg border border-white/25 bg-white/10 px-4 py-3 text-sm font-medium text-white backdrop-blur-md">
+                <Camera className="h-4 w-4 text-blue-300" />
+                {items.length} {items.length === 1 ? "Memory" : "Memories"}
+              </div>
+            </div>
           </div>
+        </div>
 
-          <h1 className="reveal-from-bottom mt-7 max-w-4xl text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
-            Our School{" "}
-            <span className="bg-gradient-to-r from-cyan-200 via-blue-300 to-violet-300 bg-clip-text text-transparent">
-              Gallery
-            </span>
-          </h1>
-
-          <p className="reveal-from-bottom delay-2 mt-6 max-w-2xl text-base leading-8 text-slate-200 sm:text-lg">
-            Explore photographs and videos capturing activities, events, and
-            memorable moments from our school community.
-          </p>
-
-          <div className="reveal-from-bottom delay-3 mt-9 flex flex-wrap items-center gap-4">
-            <a
-              href="#gallery-items"
-              className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 font-semibold text-slate-950 transition hover:-translate-y-1 hover:bg-cyan-100"
-            >
-              <Images size={18} />
-              Explore gallery
-            </a>
-
-            <span className="rounded-xl border border-white/20 bg-black/20 px-5 py-3 text-sm text-white backdrop-blur">
-              {items.length} {items.length === 1 ? "item" : "items"}
-            </span>
-          </div>
-
-          {backgroundPhotos.length > 1 && (
-            <div className="mt-12 flex items-center gap-3">
+        {backgroundPhotos.length > 1 && (
+          <>
+            <div className="absolute bottom-8 right-5 z-10 flex items-center gap-3 sm:bottom-10 sm:right-10">
               <button
                 type="button"
                 onClick={() => moveBackground(-1)}
-                aria-label="Previous background image"
-                className="rounded-full border border-white/30 bg-black/30 p-3 backdrop-blur transition hover:bg-white/20"
+                aria-label="Previous background photo"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/25 text-white backdrop-blur-md transition hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-white"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft className="h-5 w-5" />
               </button>
 
               <div className="flex items-center gap-2">
@@ -195,15 +189,13 @@ export default function Gallery() {
                   <button
                     key={photo.id}
                     type="button"
-                    aria-label={`Show background image ${index + 1}`}
-                    aria-pressed={
-                      index === backgroundIndex % backgroundPhotos.length
-                    }
                     onClick={() => setBackgroundIndex(index)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      index === backgroundIndex % backgroundPhotos.length
-                        ? "w-8 bg-white"
-                        : "w-2 bg-white/50 hover:bg-white/80"
+                    aria-label={`Show background photo ${index + 1}`}
+                    aria-current={index === backgroundIndex}
+                    className={`h-2 rounded-full transition-all ${
+                      index === backgroundIndex
+                        ? "w-7 bg-white"
+                        : "w-2 bg-white/55 hover:bg-white/80"
                     }`}
                   />
                 ))}
@@ -212,195 +204,224 @@ export default function Gallery() {
               <button
                 type="button"
                 onClick={() => moveBackground(1)}
-                aria-label="Next background image"
-                className="rounded-full border border-white/30 bg-black/30 p-3 backdrop-blur transition hover:bg-white/20"
+                aria-label="Next background photo"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/25 text-white backdrop-blur-md transition hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-white"
               >
-                <ChevronRight size={20} />
+                <ChevronRight className="h-5 w-5" />
               </button>
-
-              
-<span className="ml-1 text-xs tabular-nums text-white/80">
-  {backgroundIndex + 1} / {backgroundPhotos.length}
-</span>
-
-
             </div>
-          )}
-        </div>
+
+            {currentBackground && (
+              <div className="absolute bottom-10 left-5 z-10 hidden text-sm text-white/80 sm:left-10 sm:block">
+                {String(backgroundIndex + 1).padStart(2, "0")} /{" "}
+                {String(backgroundPhotos.length).padStart(2, "0")}
+              </div>
+            )}
+          </>
+        )}
       </section>
 
-      {/* Gallery grid */}
-      <section id="gallery-items" className="px-5 py-16 sm:px-8 sm:py-20">
-        <div className="mx-auto max-w-6xl">
-          <div className="reveal-from-bottom flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+      {/* Gallery content */}
+      <section
+        id="gallery-items"
+        className="scroll-mt-20 px-5 py-16 sm:px-8 sm:py-20 lg:px-12"
+      >
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-cyan-300">
-                Explore our memories
+              <p className="mb-2 text-sm font-semibold uppercase tracking-[0.18em] text-blue-700">
+                Memories in focus
               </p>
-              <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-                Moments in focus
+              <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+                Explore Our Moments
               </h2>
-              <p className="mt-3 max-w-xl leading-7 text-slate-400">
-                Browse the photographs and videos published by the school.
+              <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+                A collection of events, activities, celebrations, and
+                experiences from our school community.
               </p>
             </div>
 
-            {!loading && !error && (
-              <p className="text-sm text-slate-400">
-                Showing {filteredItems.length}{" "}
-                {filteredItems.length === 1 ? "item" : "items"}
-              </p>
-            )}
+            <div className="inline-flex w-fit items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 shadow-sm">
+              <Images className="h-4 w-4 text-blue-700" />
+              {filteredItems.length}{" "}
+              {filteredItems.length === 1 ? "item" : "items"}
+            </div>
           </div>
 
           {!loading && !error && categories.length > 1 && (
-            <div className="mt-8 flex flex-wrap gap-3">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  type="button"
-                  onClick={() => setSelectedCategory(category)}
-                  aria-pressed={selectedCategory === category}
-                  className={`rounded-full border px-4 py-2 text-sm font-medium transition ${
-                    selectedCategory === category
-                      ? "border-cyan-300 bg-cyan-300 text-slate-950"
-                      : "border-white/10 bg-white/5 text-slate-300 hover:border-cyan-300/50 hover:bg-white/10"
-                  }`}
-                >
-                  {category}
-                </button>
-              ))}
+            <div className="mb-8 flex flex-wrap gap-2">
+              {categories.map((category) => {
+                const isSelected = selectedCategory === category;
+
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => setSelectedCategory(category)}
+                    aria-pressed={isSelected}
+                    className={`rounded-full border px-4 py-2 text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                      isSelected
+                        ? "border-blue-700 bg-blue-700 text-white shadow-sm"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-800"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
             </div>
           )}
 
           {loading && (
-            <div
-              role="status"
-              className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
-            >
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
                 >
-                  <div className="aspect-[4/3] bg-white/10" />
+                  <div className="aspect-[4/3] animate-pulse bg-slate-200" />
                   <div className="space-y-3 p-5">
-                    <div className="h-5 w-2/3 rounded bg-white/10" />
-                    <div className="h-4 w-full rounded bg-white/10" />
+                    <div className="h-4 w-1/3 animate-pulse rounded bg-slate-200" />
+                    <div className="h-5 w-2/3 animate-pulse rounded bg-slate-200" />
+                    <div className="h-4 w-full animate-pulse rounded bg-slate-100" />
                   </div>
                 </div>
               ))}
-              <span className="sr-only">Loading gallery...</span>
             </div>
           )}
 
           {!loading && error && (
-            <div
-              role="alert"
-              className="mt-10 rounded-2xl border border-red-400/20 bg-red-400/10 p-8 text-center"
-            >
-              <p className="text-lg font-semibold text-red-200">{error}</p>
+            <div className="rounded-xl border border-red-200 bg-white px-6 py-14 text-center shadow-sm">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <Images className="h-7 w-7" />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-slate-900">
+                Gallery unavailable
+              </h3>
+              <p className="mt-2 text-slate-600">{error}</p>
               <button
                 type="button"
                 onClick={() => void loadGallery()}
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-100"
+                className="mt-6 inline-flex items-center gap-2 rounded-lg bg-blue-700 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
               >
-                <RefreshCw size={16} />
-                Try again
+                <RefreshCw className="h-4 w-4" />
+                Try Again
               </button>
             </div>
           )}
 
-          {!loading && !error && items.length === 0 && (
-            <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 px-6 py-16 text-center">
-              <Images size={44} className="mx-auto text-cyan-300" />
-              <h3 className="mt-5 text-2xl font-semibold">
-                No gallery items published yet
+          {!loading && !error && filteredItems.length === 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-50 text-blue-700">
+                <Images className="h-8 w-8" />
+              </div>
+              <h3 className="mt-5 text-xl font-semibold text-slate-900">
+                {items.length === 0
+                  ? "Our gallery is growing"
+                  : "No items in this category"}
               </h3>
-              <p className="mx-auto mt-3 max-w-lg leading-7 text-slate-400">
-                Active photos and videos will appear here after they are
-                published through the admin gallery.
+              <p className="mx-auto mt-2 max-w-md leading-7 text-slate-600">
+                {items.length === 0
+                  ? "School memories will appear here once they have been added."
+                  : "Try selecting another category to explore more school memories."}
               </p>
-            </div>
-          )}
 
-          {!loading && !error && items.length > 0 && filteredItems.length === 0 && (
-            <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 px-6 py-12 text-center text-slate-400">
-              No items found in this category.
+              {items.length > 0 && selectedCategory !== "All" && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory("All")}
+                  className="mt-5 rounded-lg bg-blue-700 px-5 py-2.5 font-semibold text-white transition hover:bg-blue-800"
+                >
+                  View All Items
+                </button>
+              )}
             </div>
           )}
 
           {!loading && !error && filteredItems.length > 0 && (
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredItems.map((item, index) => (
-                <article
-                  key={item.id}
-                  className={`card-3d group overflow-hidden rounded-2xl border border-white/10 bg-slate-900 transition duration-300 hover:border-cyan-300/40 ${
-                    index % 3 === 0
-                      ? "reveal-from-left"
-                      : index % 3 === 1
-                        ? "reveal-from-bottom"
-                        : "reveal-from-right"
-                  }`}
-                >
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredItems.map((item) => {
+                const isVideo = item.mediaType === "VIDEO";
+
+                return (
                   <button
+                    key={item.id}
                     type="button"
                     onClick={() => setSelectedItem(item)}
-                    aria-label={`View ${item.title}`}
-                    className="relative block aspect-[4/3] w-full overflow-hidden bg-slate-800 text-left"
+                    className="group overflow-hidden rounded-xl border border-slate-200 bg-white text-left shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    aria-label={`View ${item.title || "gallery item"}`}
                   >
-                    {item.mediaType === "VIDEO" ? (
-                      <div className="flex h-full w-full flex-col items-center justify-center gap-3 bg-gradient-to-br from-slate-800 to-indigo-950 text-slate-300">
-                        <Video size={44} />
-                        <span className="text-sm">Watch video</span>
-                      </div>
-                    ) : (
-                      <img
-                        src={item.mediaUrl}
-                        alt={item.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
-                        onError={(event) => {
-                          event.currentTarget.style.opacity = "0";
-                        }}
-                      />
-                    )}
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-80 transition group-hover:opacity-100" />
-
-                    <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-slate-950/70 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">
-                      {item.mediaType === "VIDEO" ? (
-                        <Video size={13} />
+                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                      {isVideo ? (
+                        <video
+                          src={item.mediaUrl}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          muted
+                          playsInline
+                          preload="metadata"
+                          aria-label={item.title || "Gallery video preview"}
+                        />
                       ) : (
-                        <Camera size={13} />
+                        <img
+                          src={item.mediaUrl}
+                          alt={item.title || "School gallery"}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                        />
                       )}
-                      {item.mediaType === "VIDEO" ? "Video" : "Photo"}
-                    </span>
 
-                    <span className="absolute bottom-4 right-4 rounded-full bg-white/15 p-2 text-white opacity-0 backdrop-blur transition group-hover:opacity-100">
-                      <Images size={18} />
-                    </span>
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/65 via-transparent to-transparent opacity-80 transition group-hover:opacity-100" />
+
+                      <div className="absolute left-4 top-4">
+                        {item.category?.trim() && (
+                          <span className="inline-flex rounded-full border border-white/40 bg-white/90 px-3 py-1 text-xs font-semibold text-slate-800 shadow-sm backdrop-blur">
+                            {item.category.trim()}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="absolute bottom-4 left-4 flex items-center gap-2 text-sm font-medium text-white">
+                        {isVideo ? (
+                          <Video className="h-4 w-4" />
+                        ) : (
+                          <Camera className="h-4 w-4" />
+                        )}
+                        <span>{isVideo ? "Video" : "Photo"}</span>
+                      </div>
+
+                      <div className="absolute bottom-4 right-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/50 bg-white/15 text-white opacity-0 backdrop-blur-sm transition group-hover:opacity-100">
+                        <Images className="h-4 w-4" />
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <h3 className="line-clamp-1 text-lg font-semibold text-slate-900 transition group-hover:text-blue-800">
+                        {item.title || "School Memory"}
+                      </h3>
+
+                      {item.description?.trim() ? (
+                        <p className="mt-2 line-clamp-2 text-sm leading-6 text-slate-600">
+                          {item.description}
+                        </p>
+                      ) : (
+                        <p className="mt-2 text-sm leading-6 text-slate-500">
+                          A special moment from our school community.
+                        </p>
+                      )}
+
+                      <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-3 text-sm">
+                        <span className="text-slate-500">
+                          View {isVideo ? "video" : "photo"}
+                        </span>
+                        <span className="inline-flex items-center gap-1 font-medium text-blue-700 transition group-hover:gap-2">
+                          Open
+                          <ChevronRight className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </div>
                   </button>
-
-                  <div className="p-5">
-                    {item.category?.trim() && (
-                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-300">
-                        {item.category}
-                      </p>
-                    )}
-
-                    <h3 className="mt-2 text-lg font-semibold text-white transition-colors group-hover:text-cyan-200">
-                      {item.title}
-                    </h3>
-
-                    {item.description?.trim() && (
-                      <p className="mt-2 line-clamp-3 whitespace-pre-line text-sm leading-6 text-slate-400">
-                        {item.description}
-                      </p>
-                    )}
-                  </div>
-                </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -409,61 +430,69 @@ export default function Gallery() {
       {/* Media lightbox */}
       {selectedItem && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 p-4 backdrop-blur-sm sm:p-8"
           role="dialog"
           aria-modal="true"
-          aria-label={selectedItem.title}
-          onClick={() => setSelectedItem(null)}
+          aria-label={selectedItem.title || "Gallery media"}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedItem(null);
+            }
+          }}
         >
-          <div
-            className="relative w-full max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
+          <button
+            type="button"
+            onClick={() => setSelectedItem(null)}
+            aria-label="Close gallery viewer"
+            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-white sm:right-7 sm:top-7"
           >
-            <button
-              type="button"
-              onClick={() => setSelectedItem(null)}
-              aria-label="Close media viewer"
-              className="absolute right-3 top-3 z-10 rounded-full border border-white/20 bg-black/70 p-2 text-white transition hover:bg-white/20"
-            >
-              <X size={22} />
-            </button>
+            <X className="h-5 w-5" />
+          </button>
 
-            {selectedItem.mediaType === "VIDEO" ? (
-              <video
-                key={selectedItem.id}
-                src={selectedItem.mediaUrl}
-                controls
-                autoPlay
-                className="max-h-[72vh] w-full bg-black object-contain"
-              >
-                Your browser does not support video playback.
-              </video>
-            ) : (
-              <img
-                src={selectedItem.mediaUrl}
-                alt={selectedItem.title}
-                className="max-h-[72vh] w-full bg-black object-contain"
-              />
-            )}
+          <div className="max-h-full w-full max-w-6xl overflow-hidden rounded-xl border border-white/15 bg-slate-900 shadow-2xl">
+            <div className="flex max-h-[75vh] items-center justify-center bg-black">
+              {selectedItem.mediaType === "VIDEO" ? (
+                <video
+                  src={selectedItem.mediaUrl}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="max-h-[75vh] w-full object-contain"
+                />
+              ) : (
+                <img
+                  src={selectedItem.mediaUrl}
+                  alt={selectedItem.title || "School gallery"}
+                  className="max-h-[75vh] w-full object-contain"
+                />
+              )}
+            </div>
 
-            <div className="p-5 sm:p-7">
-              {selectedItem.category && (
-                <p className="text-sm font-medium text-cyan-300">
-                  {selectedItem.category}
-                </p>
-              )}
-              <h3 className="mt-2 text-xl font-bold">
-                {selectedItem.title}
-              </h3>
-              {selectedItem.description && (
-                <p className="mt-3 whitespace-pre-line leading-7 text-slate-300">
-                  {selectedItem.description}
-                </p>
-              )}
+            <div className="p-5 sm:p-6">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-white sm:text-2xl">
+                    {selectedItem.title || "School Memory"}
+                  </h3>
+                  {selectedItem.description?.trim() && (
+                    <p className="mt-2 max-w-3xl leading-7 text-slate-300">
+                      {selectedItem.description}
+                    </p>
+                  )}
+                </div>
+
+                {selectedItem.category?.trim() && (
+                  <span className="w-fit shrink-0 rounded-full border border-blue-300/30 bg-blue-500/15 px-3 py-1 text-sm font-medium text-blue-200">
+                    {selectedItem.category.trim()}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      <Footer />
     </main>
   );
 }

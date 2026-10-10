@@ -1,4 +1,3 @@
-
 import type { ReactNode } from "react";
 
 interface PublicCardProps {
@@ -17,36 +16,62 @@ export default function PublicCard({
   children,
 }: PublicCardProps) {
   return (
-    <article className="group overflow-hidden rounded-2xl border border-blue-400/20 bg-[#081329]/80 shadow-lg shadow-black/20 backdrop-blur transition-all duration-300 hover:-translate-y-2 hover:border-sky-400/60 hover:shadow-xl hover:shadow-blue-950/50">
+    <article className="public-card group overflow-hidden rounded-lg border border-slate-200 bg-white transition-all duration-300 ease-out hover:-translate-y-1 hover:border-slate-300 hover:shadow-md motion-safe:animate-[cardEnter_500ms_ease-out_both]">
+      {/* Compact rectangular image */}
       {image && (
-        <div className="relative h-48 overflow-hidden bg-slate-900">
+        <div className="relative h-32 overflow-hidden bg-slate-100 sm:h-36">
           <img
             src={image}
             alt={title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 motion-reduce:transform-none"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#030817]/60 to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-black/[0.02] transition-colors duration-300 group-hover:bg-transparent" />
         </div>
       )}
 
-      <div className="p-6">
+      {/* Compact card content */}
+      <div className="p-4">
         {eyebrow && (
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-sky-300">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-500">
             {eyebrow}
           </p>
         )}
 
-        <h3 className="text-lg font-bold text-white transition-colors group-hover:text-sky-300">
+        <h3 className="line-clamp-2 text-base font-semibold leading-snug text-slate-800 transition-colors duration-200 group-hover:text-blue-800">
           {title}
         </h3>
 
-        <p className="mt-3 text-sm leading-7 text-slate-400">
+        <p className="mt-2 line-clamp-3 text-sm leading-5 text-slate-600">
           {description}
         </p>
 
-        {children && <div className="mt-5">{children}</div>}
+        {children && (
+          <div className="mt-3 border-t border-slate-100 pt-3 text-sm text-slate-700">
+            {children}
+          </div>
+        )}
       </div>
+
+      <style>{`
+        @keyframes cardEnter {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .public-card {
+            animation: none !important;
+            transition: none !important;
+          }
+        }
+      `}</style>
     </article>
   );
 }

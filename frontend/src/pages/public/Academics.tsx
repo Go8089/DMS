@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BookOpen, GraduationCap, CalendarDays, ClipboardCheck, BookMarked, ListChecks } from "lucide-react";
+import {
+  BookOpen,
+  GraduationCap,
+  CalendarDays,
+  ClipboardCheck,
+  BookMarked,
+  ListChecks,
+} from "lucide-react";
 import PublicPageHero from "@/components/public/PublicPageHero";
 import { getAcademicInfo, getGallery } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { AcademicInfo, GalleryItem } from "@/types/admin";
+import Footer from "@/components/public/Footer";
 
 export default function Academics() {
   const [academicInfo, setAcademicInfo] = useState<AcademicInfo[]>([]);
@@ -19,7 +27,9 @@ export default function Academics() {
         setGallery(galleryData);
       })
       .catch(() => {
-        setError("Unable to load academic information. Please try again later.");
+        setError(
+          "Unable to load academic information. Please try again later."
+        );
       })
       .finally(() => setLoading(false));
   }, []);
@@ -60,7 +70,8 @@ export default function Academics() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#030817] text-white">
+    <main className="min-h-screen bg-slate-50 text-slate-800">
+      {/* Hero slider: component and sizing preserved */}
       <PublicPageHero
         eyebrow="Learning & Development"
         title="Explore Our"
@@ -69,51 +80,57 @@ export default function Academics() {
         images={images}
         animation="zoom"
       >
-        <div className="mt-8 flex flex-wrap gap-4">
+        <div className="mt-8 flex flex-wrap gap-3">
           <a
             href="#academic-programs"
-            className="rounded-full bg-gradient-to-r from-sky-500 to-blue-600 px-6 py-3 font-semibold text-white transition hover:scale-105"
+            className="inline-flex items-center rounded-md bg-blue-800 px-6 py-3 text-sm font-semibold text-white shadow-sm transition duration-300 hover:-translate-y-0.5 hover:bg-blue-900 hover:shadow-md"
           >
             Explore Programs
           </a>
 
           <Link
             to="/admissions"
-            className="rounded-full border border-blue-300/40 px-6 py-3 font-semibold text-white transition hover:bg-blue-500/15"
+            className="inline-flex items-center rounded-md border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition duration-300 hover:border-blue-800 hover:text-blue-800"
           >
             Admissions
           </Link>
         </div>
       </PublicPageHero>
 
+      {/* Academic information */}
       <section
         id="academic-programs"
-        className="mx-auto max-w-7xl px-6 py-16"
+        className="mx-auto max-w-7xl px-5 py-12 sm:px-6 md:py-16"
       >
-        <div className="mb-10">
-          <p className="text-sm font-semibold uppercase tracking-widest text-sky-300">
+        <div className="mb-8 max-w-2xl">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">
             Academic Information
           </p>
-          <h2 className="mt-3 text-3xl font-bold">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
             Learning for the Future
           </h2>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-400">
+          <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
             Explore our academic programs, subjects, curriculum, examinations,
             and school guidelines.
           </p>
         </div>
 
         {loading && (
-          <p className="text-slate-300">Loading academic information...</p>
+          <div className="rounded-lg border border-slate-200 bg-white p-5 text-sm text-slate-600">
+            Loading academic information...
+          </div>
         )}
 
         {error && (
-          <div className="rounded-2xl border border-red-400/20 bg-red-950/30 p-5 text-red-300">
-            {error}
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm text-red-800"
+          >
+            <p>{error}</p>
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="ml-3 underline hover:text-white"
+              className="mt-3 font-semibold underline underline-offset-4 hover:text-red-950"
             >
               Retry
             </button>
@@ -121,19 +138,20 @@ export default function Academics() {
         )}
 
         {!loading && !error && academicInfo.length === 0 && (
-          <div className="rounded-2xl border border-blue-400/20 bg-[#081329]/80 p-8 text-center">
-            <BookOpen className="mx-auto mb-3 h-10 w-10 text-sky-300" />
-            <h3 className="text-xl font-semibold">Academic information coming soon</h3>
-            <p className="mt-2 text-slate-400">
+          <div className="rounded-lg border border-slate-200 bg-white px-6 py-10 text-center">
+            <BookOpen className="mx-auto mb-3 h-9 w-9 text-blue-800" />
+            <h3 className="text-lg font-semibold text-slate-900">
+              Academic information coming soon
+            </h3>
+            <p className="mt-2 text-sm text-slate-600">
               Academic details will appear here once they are published.
             </p>
           </div>
         )}
 
-        <div className="space-y-10">
-          {!loading &&
-            !error &&
-            academicInfo.map((academic) => {
+        {!loading && !error && academicInfo.length > 0 && (
+          <div className="space-y-7">
+            {academicInfo.map((academic, index) => {
               const availableDetails = details.filter((detail) =>
                 academic[detail.field]?.trim()
               );
@@ -141,84 +159,119 @@ export default function Academics() {
               return (
                 <article
                   key={academic.id}
-                  className="overflow-hidden rounded-3xl border border-blue-400/20 bg-gradient-to-br from-[#0b1931] via-[#081329] to-[#111035] p-6 shadow-xl shadow-blue-950/20 sm:p-8"
+                  className="animate-[academicEnter_450ms_ease-out_both] overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md"
+                  style={{ animationDelay: `${Math.min(index * 80, 400)}ms` }}
                 >
-                  <div className="mb-7 flex items-start gap-4">
-                    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl border border-sky-300/20 bg-sky-400/10">
-                      <GraduationCap className="h-6 w-6 text-sky-300" />
-                    </div>
+                  <div className="border-b border-slate-100 bg-slate-50/70 p-5 sm:p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-blue-100 bg-blue-50">
+                        <GraduationCap className="h-5 w-5 text-blue-800" />
+                      </div>
 
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-violet-300">
-                        Academic Section
-                      </p>
-                      <h3 className="mt-2 text-2xl font-bold">
-                        {academic.section}
-                      </h3>
-                      {academic.description && (
-                        <p className="mt-3 max-w-3xl leading-7 text-slate-300">
-                          {academic.description}
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-blue-800">
+                          Academic Section
                         </p>
-                      )}
+                        <h3 className="mt-1 text-xl font-bold text-slate-900 sm:text-2xl">
+                          {academic.section}
+                        </h3>
+                        {academic.description && (
+                          <p className="mt-2 max-w-3xl whitespace-pre-line text-sm leading-6 text-slate-600">
+                            {academic.description}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  {availableDetails.length > 0 ? (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                      {availableDetails.map((detail) => {
-                        const Icon = detail.icon;
-                        const content = academic[detail.field];
+                  <div className="p-5 sm:p-6">
+                    {availableDetails.length > 0 ? (
+                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {availableDetails.map((detail) => {
+                          const Icon = detail.icon;
+                          const content = academic[detail.field];
 
-                        return (
-                          <div
-                            key={detail.field}
-                            className="group rounded-2xl border border-white/10 bg-slate-950/35 p-5 transition duration-300 hover:-translate-y-1 hover:border-sky-400/40 hover:bg-blue-950/40"
-                          >
-                            <div className="mb-4 grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-sky-500/20 to-violet-500/20 text-sky-300">
-                              <Icon className="h-5 w-5" />
+                          return (
+                            <div
+                              key={detail.field}
+                              className="group rounded-lg border border-slate-200 bg-white p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-sm"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-800 transition-colors group-hover:bg-blue-100">
+                                  <Icon className="h-[18px] w-[18px]" />
+                                </div>
+                                <h4 className="text-sm font-semibold text-slate-900">
+                                  {detail.title}
+                                </h4>
+                              </div>
+
+                              <p className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">
+                                {content}
+                              </p>
                             </div>
-
-                            <h4 className="text-lg font-semibold text-white">
-                              {detail.title}
-                            </h4>
-                            <p className="mt-3 whitespace-pre-line text-sm leading-7 text-slate-300">
-                              {content}
-                            </p>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <p className="rounded-xl border border-white/10 bg-slate-950/30 p-4 text-sm text-slate-400">
-                      Details for this section have not been added yet.
-                    </p>
-                  )}
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <p className="rounded-md border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-500">
+                        Details for this section have not been added yet.
+                      </p>
+                    )}
+                  </div>
                 </article>
               );
             })}
-        </div>
+          </div>
+        )}
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="rounded-3xl border border-blue-400/20 bg-gradient-to-r from-[#081329] to-[#11103a] p-8 md:p-12">
-          <p className="text-sm font-semibold uppercase tracking-widest text-violet-300">
-            Take the Next Step
-          </p>
-          <h2 className="mt-3 text-2xl font-bold md:text-3xl">
-            Begin Your Learning Journey
-          </h2>
-          <p className="mt-4 max-w-2xl leading-7 text-slate-300">
-            Find out about admission procedures, eligibility, and the
-            information required to apply to our school.
-          </p>
+      {/* Admissions call to action */}
+      <section className="border-t border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-5 py-10 sm:px-6 md:flex-row md:items-center md:py-12">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-800">
+              Take the Next Step
+            </p>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
+              Begin Your Learning Journey
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              Find out about admission procedures, eligibility, and the
+              information required to apply to our school.
+            </p>
+          </div>
+
           <Link
             to="/admissions"
-            className="mt-6 inline-flex rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-3 font-semibold transition hover:scale-105"
+            className="inline-flex shrink-0 items-center rounded-md bg-blue-800 px-5 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-blue-900 hover:shadow-md"
           >
-            Explore Admissions →
+            Explore Admissions
+            <span className="ml-2" aria-hidden="true">
+              →
+            </span>
           </Link>
         </div>
       </section>
+
+      <style>{`
+        @keyframes academicEnter {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .animate-\\[academicEnter_450ms_ease-out_both\\] {
+            animation: none !important;
+          }
+        }
+      `}</style>
+      <Footer />
     </main>
   );
 }

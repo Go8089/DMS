@@ -1,109 +1,118 @@
-import { useEffect } from "react";
-import { ArrowUpRight, X } from "lucide-react";
-import { Link } from "react-router-dom";
 
-interface PublicMenuProps {
-  onClose: () => void;
-}
+import { useEffect, useState } from "react";
+import { Menu, X } from "lucide-react";
+import { Link, NavLink } from "react-router-dom";
 
 const links = [
-  { label: "About", path: "/about", number: "01" },
-  { label: "Academics", path: "/academics", number: "02" },
-  { label: "Admissions", path: "/admissions", number: "03" },
-  { label: "Faculty", path: "/faculty", number: "04" },
-  { label: "Facilities", path: "/facilities", number: "05" },
-  { label: "Notices", path: "/notices", number: "06" },
-  { label: "Events", path: "/events", number: "07" },
-  { label: "Achievements", path: "/achievements", number: "08" },
-  { label: "Gallery", path: "/gallery", number: "09" },
-  { label: "Contact", path: "/contact", number: "10" },
+  { label: "Home", to: "/" },
+  { label: "About", to: "/about" },
+  { label: "Academics", to: "/academics" },
+  { label: "Admissions", to: "/admissions" },
+  { label: "Faculty", to: "/faculty" },
+  { label: "Facilities", to: "/facilities" },
+  { label: "Notices", to: "/notices" },
+  { label: "Events", to: "/events" },
+  { label: "Achievements", to: "/achievements" },
+  { label: "Gallery", to: "/gallery" },
+  { label: "Contact", to: "/contact" },
 ];
 
-function PublicMenu({ onClose }: PublicMenuProps) {
+export default function PublicMenu() {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        onClose();
-      }
-    }
+    if (!mobileOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleKeyDown);
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false);
+    };
+
+    window.addEventListener("keydown", handleEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", handleEscape);
     };
-  }, [onClose]);
+  }, [mobileOpen]);
+
+  const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `whitespace-nowrap rounded-md px-2 py-2 text-[15px] font-semibold transition-colors ${
+      isActive
+        ? "text-blue-700"
+        : "text-slate-700 hover:bg-slate-100 hover:text-blue-700"
+    }`;
+
+  const closeMobileMenu = () => setMobileOpen(false);
 
   return (
-    <div
-      className="fixed inset-0 z-[100] overflow-y-auto bg-neutral-950/98 text-white backdrop-blur-2xl animate-menu-in"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Main navigation"
-    >
-      <div className="mx-auto flex min-h-[100svh] w-full max-w-[1600px] flex-col px-6 py-6 sm:px-10 md:px-14 lg:px-20">
-        {/* Menu header */}
-        <div className="flex items-center justify-between border-b border-white/10 pb-5">
-          <span className="text-xs font-medium uppercase tracking-[0.3em] text-white/50">
-            Navigation
-          </span>
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-md">
+      <nav
+        className="mx-auto flex min-h-14 max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
+        aria-label="Main navigation"
+      >
+        {/* DMS branding */}
+        <Link
+          to="/"
+          onClick={closeMobileMenu}
+          className="shrink-0 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl"
+          aria-label="DMS homepage"
+        >
+          DMS
+        </Link>
 
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close navigation menu"
-            autoFocus
-            className="group inline-flex items-center gap-3 rounded-full border border-white/20 px-4 py-3 text-sm transition duration-300 hover:bg-white hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <span className="hidden sm:inline">Close</span>
-            <X
-              size={20}
-              className="transition-transform duration-300 group-hover:rotate-90"
-              aria-hidden="true"
-            />
-          </button>
+        {/* Desktop navigation */}
+        <div className="hidden items-center justify-end gap-6 xl:flex">
+          {links.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === "/"}
+              className={navLinkClass}
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </div>
 
-        {/* Navigation links */}
-        <nav className="flex flex-1 items-center py-10">
-          <div className="grid w-full grid-cols-1 gap-x-12 md:grid-cols-2">
-            {links.map((item, index) => (
-              <Link
-                key={item.path}
-                to={item.path}
-                onClick={onClose}
-                style={{ animationDelay: `${index * 45}ms` }}
-                className="group flex animate-slide-right items-center gap-4 border-b border-white/10 py-4 transition-colors duration-300 hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white sm:py-5 md:gap-6"
+        {/* Mobile menu toggle */}
+        <button
+          type="button"
+          onClick={() => setMobileOpen((open) => !open)}
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-800 transition hover:bg-slate-100 xl:hidden"
+          aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+          aria-expanded={mobileOpen}
+        >
+          {mobileOpen ? <X size={25} /> : <Menu size={25} />}
+        </button>
+      </nav>
+
+      {/* Mobile navigation */}
+      {mobileOpen && (
+        <div className="absolute left-0 right-0 top-full max-h-[calc(100dvh-56px)] overflow-y-auto border-b border-slate-200 bg-white px-4 py-3 shadow-lg xl:hidden">
+          <div className="mx-auto flex max-w-2xl flex-col gap-1">
+            {links.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                end={link.to === "/"}
+                onClick={closeMobileMenu}
+                className={({ isActive }) =>
+                  `rounded-lg px-4 py-3 text-base font-semibold transition-colors ${
+                    isActive
+                      ? "bg-blue-50 text-blue-700"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-blue-700"
+                  }`
+                }
               >
-                <span className="w-6 shrink-0 text-xs tabular-nums text-white/35 transition-colors group-hover:text-white/80">
-                  {item.number}
-                </span>
-
-                <span className="min-w-0 flex-1 text-2xl font-light tracking-tight transition-transform duration-300 group-hover:translate-x-2 sm:text-3xl md:text-4xl lg:text-5xl">
-                  {item.label}
-                </span>
-
-                <ArrowUpRight
-                  size={22}
-                  aria-hidden="true"
-                  className="shrink-0 text-white/30 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-white sm:size-6"
-                />
-              </Link>
+                {link.label}
+              </NavLink>
             ))}
           </div>
-        </nav>
-
-        {/* Footer */}
-        <div className="flex flex-col gap-2 border-t border-white/10 pt-5 text-xs text-white/40 sm:flex-row sm:items-center sm:justify-between">
-          <span>Explore the website</span>
-          <span>Use the menu to navigate</span>
         </div>
-      </div>
-    </div>
+      )}
+    </header>
   );
 }
-
-export default PublicMenu;

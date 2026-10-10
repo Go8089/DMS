@@ -4,10 +4,10 @@ import PublicHeader from "./PublicHeader";
 
 function PublicLayout() {
   return (
-    <div className="relative min-h-screen w-full overflow-x-clip bg-white text-gray-900">
+    <div className="relative min-h-screen w-full overflow-x-clip bg-white text-slate-900">
       <PublicHeader />
 
-      <main className="min-h-screen w-full">
+      <main className="w-full">
         <Outlet />
       </main>
     </div>

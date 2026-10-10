@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PublicPageHero from "@/components/public/PublicPageHero";
 import PublicCard from "@/components/public/PublicCard";
+import Footer from "@/components/public/Footer";
 import { getFaculty, getGallery } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { Faculty as FacultyMember, GalleryItem } from "@/types/admin";
@@ -33,7 +34,7 @@ export default function Faculty() {
   });
 
   return (
-    <main className="min-h-screen bg-[#030817] text-white">
+    <main className="min-h-screen bg-slate-50 text-slate-800">
       <PublicPageHero
         eyebrow="Our Educators"
         title="Meet Our"
@@ -44,7 +45,7 @@ export default function Faculty() {
       >
         <Link
           to="/contact"
-          className="mt-8 inline-flex rounded-full bg-gradient-to-r from-sky-500 to-violet-600 px-6 py-3 font-semibold transition hover:scale-105"
+          className="mt-8 inline-flex items-center rounded-md bg-blue-800 px-6 py-3 font-semibold text-white transition duration-300 hover:scale-[1.02] hover:bg-blue-900"
         >
           Contact Our School
         </Link>
@@ -52,28 +53,32 @@ export default function Faculty() {
 
       <section className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-10">
-          <p className="text-sm font-semibold uppercase tracking-widest text-sky-300">
+          <p className="text-sm font-semibold uppercase tracking-widest text-blue-800">
             Our Team
           </p>
-          <h2 className="mt-3 text-3xl font-bold">Dedicated Educators</h2>
-          <p className="mt-3 max-w-2xl leading-7 text-slate-400">
+
+          <h2 className="mt-3 text-3xl font-bold text-slate-900">
+            Dedicated Educators
+          </h2>
+
+          <p className="mt-3 max-w-2xl leading-7 text-slate-600">
             Discover the people helping our students learn, grow, and achieve
             their potential.
           </p>
         </div>
 
         {loading && (
-          <p className="text-slate-300">Loading faculty members...</p>
+          <p className="text-slate-600">Loading faculty members...</p>
         )}
 
         {error && (
-          <p className="rounded-xl border border-red-400/20 bg-red-950/30 p-4 text-red-300">
+          <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-700">
             {error}
           </p>
         )}
 
         {!loading && !error && sortedFaculty.length === 0 && (
-          <p className="text-slate-400">
+          <p className="rounded-lg border border-slate-200 bg-white p-6 text-slate-500">
             Faculty profiles have not been published yet.
           </p>
         )}
@@ -83,7 +88,10 @@ export default function Faculty() {
             <PublicCard
               key={member.id}
               title={member.name}
-              description={member.description || "Dedicated to student learning and development."}
+              description={
+                member.description ||
+                "Dedicated to student learning and development."
+              }
               image={member.imageUrl}
               eyebrow={
                 member.principal
@@ -91,28 +99,32 @@ export default function Faculty() {
                   : member.designation
               }
             >
-              <div className="space-y-2 text-sm text-slate-400">
+              <div className="space-y-2 text-sm text-slate-600">
                 {member.department && (
                   <p>
-                    <span className="text-slate-300">Department:</span>{" "}
+                    <span className="font-medium text-slate-800">
+                      Department:
+                    </span>{" "}
                     {member.department}
                   </p>
                 )}
 
                 {member.qualification && (
                   <p>
-                    <span className="text-slate-300">Qualification:</span>{" "}
+                    <span className="font-medium text-slate-800">
+                      Qualification:
+                    </span>{" "}
                     {member.qualification}
                   </p>
                 )}
               </div>
 
               {(member.email || member.phone) && (
-                <div className="mt-5 flex flex-wrap gap-3 border-t border-blue-400/15 pt-4">
+                <div className="mt-5 flex flex-wrap gap-4 border-t border-slate-200 pt-4">
                   {member.email && (
                     <a
                       href={`mailto:${member.email}`}
-                      className="text-sm font-semibold text-sky-300 hover:text-white"
+                      className="text-sm font-semibold text-blue-800 transition hover:text-blue-950 hover:underline"
                     >
                       Email
                     </a>
@@ -121,7 +133,7 @@ export default function Faculty() {
                   {member.phone && (
                     <a
                       href={`tel:${member.phone}`}
-                      className="text-sm font-semibold text-violet-300 hover:text-white"
+                      className="text-sm font-semibold text-blue-800 transition hover:text-blue-950 hover:underline"
                     >
                       Call
                     </a>
@@ -132,6 +144,8 @@ export default function Faculty() {
           ))}
         </div>
       </section>
+
+      <Footer />
     </main>
   );
 }

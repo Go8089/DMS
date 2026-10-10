@@ -4,6 +4,7 @@ import PublicCard from "@/components/public/PublicCard";
 import { getEvents, getGallery } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { Event, GalleryItem } from "@/types/admin";
+import Footer from "@/components/public/Footer";
 
 export default function Events() {
   const [events, setEvents] = useState<Event[]>([]);
@@ -17,17 +18,21 @@ export default function Events() {
         setEvents(eventData);
         setGallery(galleryData);
       })
-      .catch(() => setError("Unable to load events. Please try again later."))
+      .catch(() =>
+        setError("Unable to load events. Please try again later."),
+      )
       .finally(() => setLoading(false));
   }, []);
 
   const images = getHeroImages(gallery);
   const sortedEvents = [...events].sort(
-    (a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime(),
+    (a, b) =>
+      new Date(a.eventDate).getTime() -
+      new Date(b.eventDate).getTime(),
   );
 
   return (
-    <main className="min-h-screen bg-[#030817] text-white">
+    <main className="min-h-screen bg-slate-50 text-slate-800">
       <PublicPageHero
         eyebrow="School Calendar"
         title="Our"
@@ -38,12 +43,22 @@ export default function Events() {
       />
 
       <section className="mx-auto max-w-7xl px-6 py-16">
-        <h2 className="mb-8 text-3xl font-bold">School Events</h2>
+        <h2 className="mb-8 text-3xl font-bold text-slate-900">
+          School Events
+        </h2>
 
-        {loading && <p className="text-slate-300">Loading events...</p>}
-        {error && <p className="text-red-300">{error}</p>}
+        {loading && (
+          <p className="text-slate-600">Loading events...</p>
+        )}
+
+        {error && (
+          <p className="text-red-700">{error}</p>
+        )}
+
         {!loading && !error && sortedEvents.length === 0 && (
-          <p className="text-slate-400">No events have been announced yet.</p>
+          <p className="text-slate-500">
+            No events have been announced yet.
+          </p>
         )}
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -58,6 +73,7 @@ export default function Events() {
           ))}
         </div>
       </section>
+      <Footer />
     </main>
   );
 }

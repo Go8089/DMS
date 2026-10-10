@@ -1,9 +1,26 @@
-
 @import "tailwindcss";
 
 /* =================================
-   Base
+   Global theme — clean school website
 ================================= */
+
+:root {
+  color-scheme: light;
+
+  --page-bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --brand-primary: #2563eb;
+  --brand-hover: #1d4ed8;
+  --brand-soft: #eff6ff;
+  --accent-color: #0f766e;
+
+  font-family: Arial, Helvetica, sans-serif;
+}
 
 html,
 body,
@@ -20,10 +37,11 @@ html {
 
 body {
   overflow-x: hidden;
-  background: #080b12;
-  color: #fff;
+  background: var(--page-bg);
+  color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -35,93 +53,114 @@ img {
 }
 
 /* =================================
+   Shared public-page surfaces
+================================= */
+
+.public-page {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--text-primary);
+}
+
+.public-section {
+  background: var(--page-bg);
+  color: var(--text-primary);
+}
+
+.public-card {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  box-shadow: 0 4px 18px rgb(15 23 42 / 5%);
+}
+
+.public-muted {
+  color: var(--text-secondary);
+}
+
+.public-subtle {
+  color: var(--text-muted);
+}
+
+.public-button {
+  background: var(--brand-primary);
+  color: #ffffff;
+  border: 1px solid transparent;
+  transition: background-color 200ms ease, transform 200ms ease;
+}
+
+.public-button:hover {
+  background: var(--brand-hover);
+}
+
+.public-button:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+
+.public-link {
+  color: var(--brand-primary);
+}
+
+.public-link:hover {
+  color: var(--brand-hover);
+}
+
+/*
+  Keep the admin dashboard independent from public styles.
+  Add className="admin-theme" to its top-level layout.
+*/
+.admin-theme {
+  color-scheme: light;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+/* =================================
    Existing public page animations
 ================================= */
 
 @keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(50px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slide-left {
-  from {
-    opacity: 0;
-    transform: translateX(60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(60px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slide-right {
-  from {
-    opacity: 0;
-    transform: translateX(-60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(-60px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fade-scale {
-  from {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.08); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes content-in {
-  from {
-    opacity: 0;
-    transform: translateY(35px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(35px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes image-in {
-  from {
-    opacity: 0;
-    transform: scale(1.08);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.08); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes menu-in {
-  from {
-    opacity: 0;
-    transform: scale(1.03);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+  from { opacity: 0; transform: scale(1.03); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .animate-slide-up {
@@ -156,8 +195,6 @@ img {
   animation: menu-in 350ms ease-out both;
 }
 
-/* Existing animation delays */
-
 .stagger-1 { animation-delay: 100ms; }
 .stagger-2 { animation-delay: 200ms; }
 .stagger-3 { animation-delay: 300ms; }
@@ -172,34 +209,20 @@ img {
 @keyframes letter-assemble {
   0% {
     opacity: 0;
-    transform:
-      perspective(600px)
-      translate3d(0, 35px, -120px)
-      rotateX(-90deg)
-      rotateY(35deg)
-      scale(0.5);
+    transform: perspective(600px) translate3d(0, 35px, -120px)
+      rotateX(-90deg) rotateY(35deg) scale(0.5);
     filter: blur(8px);
   }
-
   70% {
     opacity: 1;
-    transform:
-      perspective(600px)
-      translate3d(0, -4px, 15px)
-      rotateX(8deg)
-      rotateY(-4deg)
-      scale(1.04);
+    transform: perspective(600px) translate3d(0, -4px, 15px)
+      rotateX(8deg) rotateY(-4deg) scale(1.04);
     filter: blur(0);
   }
-
   100% {
     opacity: 1;
-    transform:
-      perspective(600px)
-      translate3d(0, 0, 0)
-      rotateX(0)
-      rotateY(0)
-      scale(1);
+    transform: perspective(600px) translate3d(0, 0, 0)
+      rotateX(0) rotateY(0) scale(1);
     filter: blur(0);
   }
 }
@@ -223,9 +246,7 @@ img {
 @keyframes enter-from-left {
   from {
     opacity: 0;
-    transform:
-      perspective(1000px)
-      translate3d(-100px, 0, -80px)
+    transform: perspective(1000px) translate3d(-100px, 0, -80px)
       rotateY(30deg);
     filter: blur(5px);
   }
@@ -239,9 +260,7 @@ img {
 @keyframes enter-from-right {
   from {
     opacity: 0;
-    transform:
-      perspective(1000px)
-      translate3d(100px, 0, -80px)
+    transform: perspective(1000px) translate3d(100px, 0, -80px)
       rotateY(-30deg);
     filter: blur(5px);
   }
@@ -255,9 +274,7 @@ img {
 @keyframes enter-from-top {
   from {
     opacity: 0;
-    transform:
-      perspective(1000px)
-      translate3d(0, -70px, -100px)
+    transform: perspective(1000px) translate3d(0, -70px, -100px)
       rotateX(-35deg);
   }
   to {
@@ -269,9 +286,7 @@ img {
 @keyframes enter-from-bottom {
   from {
     opacity: 0;
-    transform:
-      perspective(1000px)
-      translate3d(0, 75px, -100px)
+    transform: perspective(1000px) translate3d(0, 75px, -100px)
       rotateX(25deg);
     filter: blur(4px);
   }
@@ -298,8 +313,6 @@ img {
   animation: enter-from-bottom 850ms cubic-bezier(0.2, 0.75, 0.25, 1) both;
 }
 
-/* Directional animation delays */
-
 .delay-2 { animation-delay: 250ms; }
 .delay-3 { animation-delay: 400ms; }
 .delay-4 { animation-delay: 550ms; }
@@ -311,20 +324,20 @@ img {
 
 .card-3d {
   transform-style: preserve-3d;
-  transition:
-    transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1),
-    border-color 400ms ease,
-    box-shadow 400ms ease;
+  transition: transform 500ms cubic-bezier(0.2, 0.75, 0.25, 1),
+    border-color 400ms ease, box-shadow 400ms ease;
 }
 
 .card-3d:hover {
-  transform: perspective(1200px) rotateX(2deg) rotateY(-3deg) translateY(-5px);
-  border-color: rgb(255 255 255 / 25%);
-  box-shadow: 0 25px 70px rgb(0 0 0 / 28%);
+  transform: perspective(1200px) rotateX(2deg) rotateY(-3deg)
+    translateY(-5px);
+  border-color: #cbd5e1;
+  box-shadow: 0 25px 50px rgb(15 23 42 / 12%);
 }
 
 .card-3d-reverse:hover {
-  transform: perspective(1200px) rotateX(2deg) rotateY(3deg) translateY(-5px);
+  transform: perspective(1200px) rotateX(2deg) rotateY(3deg)
+    translateY(-5px);
 }
 
 /* =================================
@@ -332,13 +345,8 @@ img {
 ================================= */
 
 @keyframes ambient-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  50% {
-    transform: translate3d(18px, -24px, 0) scale(1.08);
-  }
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(18px, -24px, 0) scale(1.08); }
 }
 
 .animate-ambient {
@@ -347,6 +355,25 @@ img {
 
 .animate-ambient-delay {
   animation: ambient-float 12s ease-in-out -5s infinite;
+}
+
+/* =================================
+   Gallery background
+================================= */
+
+@keyframes gallery-background-enter {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.gallery-background-image {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  animation: gallery-background-enter 1500ms ease-in-out both;
+  will-change: opacity, transform;
 }
 
 /* =================================
@@ -375,35 +402,7 @@ img {
   .card-3d-reverse:hover {
     transform: none;
   }
-}
 
-/* =================================
-   Continuously changing gallery background
-================================= */
-
-@keyframes gallery-background-enter {
-  from {
-    opacity: 0;
-    transform: scale(1.06);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.gallery-background-image {
-  position: absolute;
-  inset: 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  animation: gallery-background-enter 1500ms ease-in-out both;
-  will-change: opacity, transform;
-}
-
-@media (prefers-reduced-motion: reduce) {
   .gallery-background-image {
     animation: none;
   }
