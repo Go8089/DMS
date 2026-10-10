@@ -7,6 +7,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -17,6 +20,8 @@ services:
     container_name: dms-backend
     depends_on:
       - postgres
+    env_file:
+      - .env  
     ports:
       - "8080:8080"
     volumes:
