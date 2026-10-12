@@ -99,18 +99,6 @@ export interface SchoolInfo {
   mission: string;
 }
 
-export interface SchoolInfo {
-  id: number;
-  schoolName: string;
-  address: string;
-  phone: string;
-  email: string;
-  principalName: string;
-  history: string;
-  vision: string;
-  mission: string;
-}
-
 export interface AcademicInfo {
   id: number;
   section: string;
