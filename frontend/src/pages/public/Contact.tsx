@@ -5,7 +5,7 @@ import PublicCard from "@/components/public/PublicCard";
 import { getGallery, getSchoolInfo } from "@/api/public";
 import { getHeroImages } from "@/components/public/PublicTheme";
 import type { GalleryItem, SchoolInfo } from "@/types/admin";
-import Footer from "@/components/public/Footer";
+
 export default function Contact() {
   const [school, setSchool] = useState<SchoolInfo | null>(null);
   const [gallery, setGallery] = useState<GalleryItem[]>([]);
@@ -147,7 +147,7 @@ export default function Contact() {
           </Link>
         </div>
       </section>
-      <Footer />
+      
     </main>
   );
 }
