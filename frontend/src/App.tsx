@@ -5,7 +5,7 @@ import PublicLayout from "./components/public/PublicLayout";
 import Home from "./pages/public/Home";
 import About from "./pages/public/About";
 import Academics from "./pages/public/Academics";
-import Admissions from "./pages/public/Admissions";
+import Admissions from "@/pages/public/Admissions";
 import Achievements from "@/pages/public/Achievements";
 import Events from "@/pages/public/Events";
 import Notices from "@/pages/public/Notices";
