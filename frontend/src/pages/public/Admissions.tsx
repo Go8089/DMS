@@ -19,7 +19,7 @@ import { getHeroImages } from "@/components/public/PublicTheme";
 import type { AdmissionInfo, GalleryItem } from "@/types/admin";
 import Footer from "@/components/public/Footer";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function Admissions() {
   const [admissions, setAdmissions] = useState<AdmissionInfo[]>([]);
