@@ -324,6 +324,7 @@ export default function Home() {
       <section className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-7 sm:px-6 md:flex-row md:items-center md:justify-between">
           <div>
+             <h2 className="text-xl font-semibold text-slate-900">Build for DMV CoreTech</h2>
             <h2 className="text-xl font-semibold text-slate-900">
               Join our school community
             </h2>
